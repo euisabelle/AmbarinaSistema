@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Ambarina.BLL/Ambarina.BLL.csproj" />
+  <Project Path="Ambarina.DAL/Ambarina.DAL.csproj" />
+  <Project Path="Ambarina.UI/Ambarina.UI.csproj" />
+</Solution>
