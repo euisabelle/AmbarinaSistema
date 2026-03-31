@@ -94,7 +94,10 @@ namespace Ambarina.UI
             // Adicione aqui todos os painéis que você criar
             pnlViewDashboard.Visible = false;
             pnlViewAlmoxarifado.Visible = false;
-            // pnlViewProducao.Visible = false; <-- Exemplo de futuro
+            pnlViewProducao.Visible = false; 
+            pnlViewEstoque.Visible = false;
+            pnlViewVendas.Visible = false;
+
 
             // Mostra o escolhido
             painelSelecionado.Visible = true;
@@ -153,6 +156,8 @@ namespace Ambarina.UI
             SelecionarBotao((Button)sender);
 
             AtualizarCabecalho("PRODUÇÃO", "Formulação de velas e registro de fabricação com baixa de estoque.");
+
+            AbrirPainel(pnlViewProducao);
         }
 
         private void btnNavEstoque_Click(object sender, EventArgs e)
@@ -160,6 +165,8 @@ namespace Ambarina.UI
             SelecionarBotao((Button)sender);
 
             AtualizarCabecalho("ESTOQUE", "Controle de produtos finalizados e prontos para o cliente.");
+
+            AbrirPainel(pnlViewEstoque);
         }
 
         private void btnNavVendas_Click(object sender, EventArgs e)
@@ -167,6 +174,8 @@ namespace Ambarina.UI
             SelecionarBotao((Button)sender);
 
             AtualizarCabecalho("VENDAS E ORÇAMENTOS", "Elaboração de pedidos e geração de documentos comerciais.");
+
+            AbrirPainel(pnlViewVendas);
         }
 
         private void btnNavFinanceiro_Click(object sender, EventArgs e)
@@ -226,6 +235,11 @@ namespace Ambarina.UI
         {
             dgvAlmoxarifado.ClearSelection(); // Limpa a barra carrossel/caramelo
             this.ActiveControl = null;       // Tira o foco de qualquer campo
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
