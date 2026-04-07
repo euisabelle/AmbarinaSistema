@@ -97,6 +97,7 @@ namespace Ambarina.UI
             pnlViewProducao.Visible = false; 
             pnlViewEstoque.Visible = false;
             pnlViewVendas.Visible = false;
+            pnlViewFinanceiro.Visible = false;
 
 
             // Mostra o escolhido
@@ -122,6 +123,9 @@ namespace Ambarina.UI
             ArredondarTodosCantos(pnlCardFaturamento, 20);
             ArredondarTodosCantos(pnlCardInsumos, 20);
             ArredondarTodosCantos(pnlCardEstoque, 20);
+            ArredondarTodosCantos(pnlCardEntradas, 20);
+            ArredondarTodosCantos(pnlCardSaidas, 20);
+            ArredondarTodosCantos(pnlCardSaldo, 20);
 
             AbrirPainel(pnlViewDashboard);
 
@@ -183,6 +187,8 @@ namespace Ambarina.UI
             SelecionarBotao((Button)sender);
 
             AtualizarCabecalho("FINANCEIRO", "Fluxo de caixa, faturamento e análise de lucratividade.");
+
+            AbrirPainel(pnlViewFinanceiro);
         }
 
         private void btnNavDashboard_Click(object sender, EventArgs e)
