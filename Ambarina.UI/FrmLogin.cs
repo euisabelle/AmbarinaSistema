@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Ambarina.BLL;
+using Ambarina.DAL;
+using Ambarina.DTO;
+using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -144,26 +148,29 @@ namespace Ambarina.UI
         //ACESSO
         private void btnLoginEntrar_Click(object sender, EventArgs e)
         {
-            // Validação básica para não enviar campos com placeholder
-            if (txtLoginUsuario.Text == "Usuário" || txtLoginSenha.Text == "Senha")
+            try
             {
-                MessageBox.Show("Por favor, preencha as credenciais da Ambarina.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+                UsuarioBLL bll = new UsuarioBLL();
+                // Pegamos o que o user digitou nas TextBoxes
+                UsuarioDTO userEncontrado = bll.Autenticar(txtLoginUsuario.Text, txtLoginSenha.Text);
 
-            // Teste de acesso (Simulado)
-            if (txtLoginUsuario.Text.Trim() == "admin" && txtLoginSenha.Text.Trim() == "123")
-            {
-                MessageBox.Show("Bem-vinda de volta, Isabelle!", "Login com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (userEncontrado != null)
+                {
+                    MessageBox.Show($"Bem-vinda, {userEncontrado.Nome}!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Aqui  abre o próximo formulário:
-                FrmMenuPrincipal principal = new FrmMenuPrincipal();
-                principal.Show();
-                this.Hide();
+                    // Aqui abre o Menu Principal
+                    FrmMenuPrincipal menu = new FrmMenuPrincipal();
+                    menu.Show();
+                    this.Hide(); // Esconde a tela de login
+                }
+                else
+                {
+                    MessageBox.Show("Usuário ou senha incorretos.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Usuário ou senha incorretos.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -192,6 +199,11 @@ namespace Ambarina.UI
         private void lblRedefinirSenha_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Função de redefinir senha ainda não implementada.", "Em Breve", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void FrmLogin_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

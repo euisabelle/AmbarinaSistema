@@ -1,18 +1,22 @@
-﻿using System;
+﻿using Ambarina.BLL;
+using Ambarina.DTO;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Drawing.Drawing2D;
 
 namespace Ambarina.UI
 {
     public partial class FrmMenuPrincipal : Form
     {
+        int idInsumoSelecionado = 0;
+
         public FrmMenuPrincipal()
         {
             InitializeComponent();
@@ -94,7 +98,7 @@ namespace Ambarina.UI
             // Adicione aqui todos os painéis que você criar
             pnlViewDashboard.Visible = false;
             pnlViewAlmoxarifado.Visible = false;
-            pnlViewProducao.Visible = false; 
+            pnlViewProducao.Visible = false;
             pnlViewEstoque.Visible = false;
             pnlViewVendas.Visible = false;
             pnlViewFinanceiro.Visible = false;
@@ -139,6 +143,9 @@ namespace Ambarina.UI
             // Alinha o TEXTO DO CABEÇALHO (Título) à direita também para acompanhar
             dgvAlmoxarifado.Columns["colQtdeAtual"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
             dgvAlmoxarifado.Columns["colMinimo"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+
+            //atualizar grid almoxarifado
+            AtualizarGrid();
         }
 
         private void lbLoginExit_Click(object sender, EventArgs e)
@@ -243,9 +250,108 @@ namespace Ambarina.UI
             this.ActiveControl = null;       // Tira o foco de qualquer campo
         }
 
-        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        private void btnSalvarInsumo_Click(object sender, EventArgs e)
         {
+            try
+            {
+                // 1. Criar o objeto e preencher com os dados da tela
+                InsumoDTO novoInsumo = new InsumoDTO();
+                novoInsumo.Nome = txtNomeInsumo.Text;
+                novoInsumo.Categoria = cmbCategoria.Text;
+                novoInsumo.UnidadeMedida = cmbUnidade.Text;
+                // Importante: usar nomes consistentes com DTO
+                novoInsumo.QtdeInicial = Convert.ToDecimal(txtQtdInicial.Text);
+                novoInsumo.CustoInicial = Convert.ToDecimal(txtCustoInicial.Text);
+                novoInsumo.EstoqueMinimo = Convert.ToDecimal(txtEstoqueMinimo.Text);
 
+                InsumoBLL bll = new InsumoBLL();
+
+                // 2. Lógica de decisão: Salvar ou Editar
+                if (idInsumoSelecionado == 0)
+                {
+                    // Salvar novo
+                    bll.SalvarInsumo(novoInsumo);
+                    MessageBox.Show("Insumo cadastrado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    // Editar existente
+                    novoInsumo.Id = idInsumoSelecionado;
+                    bll.EditarInsumo(novoInsumo);
+                    MessageBox.Show("Insumo atualizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Resetar para o modo "Salvar"
+                    idInsumoSelecionado = 0;
+                    btnSalvarInsumo.Text = "SALVAR INSUMO";
+                }
+
+                // 3. Atualizar a visualização
+                AtualizarGrid();
+                LimparCamposAlmoxarifado();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LimparCamposAlmoxarifado()
+        {
+            txtNomeInsumo.Clear();
+            txtQtdInicial.Clear();
+            txtCustoInicial.Clear();
+            txtEstoqueMinimo.Clear();
+            cmbCategoria.SelectedIndex = -1;
+            cmbUnidade.SelectedIndex = -1;
+            txtNomeInsumo.Focus();
+        }
+
+        private void AtualizarGrid()
+        {
+            try
+            {
+                dgvAlmoxarifado.AutoGenerateColumns = false; // Esta linha impede que o C# crie colunas extras
+
+                InsumoBLL bll = new InsumoBLL();
+                dgvAlmoxarifado.DataSource = bll.ListarInsumos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar a lista: " + ex.Message);
+            }
+        }
+
+        private void dgvAlmoxarifado_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            // Pega o ID da linha 
+            int id = Convert.ToInt32(dgvAlmoxarifado.Rows[e.RowIndex].Cells["colID"].Value);
+
+            // Lógica Excluir
+            if (dgvAlmoxarifado.Columns[e.ColumnIndex].Name == "colExcluirAlmox")
+            {
+                if (MessageBox.Show("Deseja excluir este item?", "Ambarina", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    new InsumoBLL().ExcluirInsumo(id);
+                    AtualizarGrid();
+                }
+            }
+
+            // Lógica Editar
+            if (dgvAlmoxarifado.Columns[e.ColumnIndex].Name == "colEditarAlmox")
+            {
+                pnlViewAlmoxarifado.BackColor = Color.FromArgb(255, 252, 240);
+                idInsumoSelecionado = id; // Guarda o ID para o Update
+                txtNomeInsumo.Text = dgvAlmoxarifado.Rows[e.RowIndex].Cells["colNome"].Value.ToString();
+                cmbCategoria.Text = dgvAlmoxarifado.Rows[e.RowIndex].Cells["colCategoria"].Value.ToString();
+                cmbUnidade.Text = dgvAlmoxarifado.Rows[e.RowIndex].Cells["colUnDeMedida"].Value.ToString();
+                txtQtdInicial.Text = dgvAlmoxarifado.Rows[e.RowIndex].Cells["colQtdeAtual"].Value.ToString();
+                txtCustoInicial.Text = dgvAlmoxarifado.Rows[e.RowIndex].Cells["colCustoUnit"].Value.ToString();
+                txtEstoqueMinimo.Text = dgvAlmoxarifado.Rows[e.RowIndex].Cells["colMinimo"].Value.ToString();
+
+                btnAdicionarInsumo.Text = "ATUALIZAR INSUMO"; // Muda o visual do botão
+            }
         }
     }
 }

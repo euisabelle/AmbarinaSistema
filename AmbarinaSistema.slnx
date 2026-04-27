@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="Ambarina.BLL/Ambarina.BLL.csproj" />
   <Project Path="Ambarina.DAL/Ambarina.DAL.csproj" />
+  <Project Path="Ambarina.DTO/Ambarina.DTO.csproj" Id="93713fba-97a7-4bd0-abae-c1d0752ec924" />
   <Project Path="Ambarina.UI/Ambarina.UI.csproj" />
 </Solution>

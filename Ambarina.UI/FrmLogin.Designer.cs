@@ -224,6 +224,7 @@
             Name = "FrmLogin";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmLogin";
+            Load += FrmLogin_Load;
             Shown += FrmLogin_Shown;
             KeyDown += FrmLogin_KeyDown;
             panel1.ResumeLayout(false);

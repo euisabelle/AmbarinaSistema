@@ -9,7 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="9.7.0" />
     <PackageReference Include="System.Data.SQLite" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ambarina.BLL\Ambarina.BLL.csproj" />
+    <ProjectReference Include="..\Ambarina.DAL\Ambarina.DAL.csproj" />
+    <ProjectReference Include="..\Ambarina.DTO\Ambarina.DTO.csproj" />
   </ItemGroup>
 
   <ItemGroup>
