@@ -133,11 +133,11 @@ namespace Ambarina.UI
             AtualizarCabecalho("DASHBOARD", "Visão geral do desempenho e métricas da Ambarina.");
 
             // Alinha o CONTEÚDO das células à direita
-            dgvAlmoxarifado.Columns["colSaldo"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgvAlmoxarifado.Columns["colQtdeAtual"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             dgvAlmoxarifado.Columns["colMinimo"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
 
             // Alinha o TEXTO DO CABEÇALHO (Título) à direita também para acompanhar
-            dgvAlmoxarifado.Columns["colSaldo"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgvAlmoxarifado.Columns["colQtdeAtual"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
             dgvAlmoxarifado.Columns["colMinimo"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
 

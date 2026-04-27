@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmLogin));
             panel1 = new Panel();
+            lblRedefinirSenha = new Label();
             lbCaps = new Label();
             picLoginNaoVerSenha = new PictureBox();
             picLoginIconUser = new PictureBox();
@@ -49,6 +50,7 @@
             // panel1
             // 
             panel1.BackColor = Color.FromArgb(248, 248, 248);
+            panel1.Controls.Add(lblRedefinirSenha);
             panel1.Controls.Add(lbCaps);
             panel1.Controls.Add(picLoginNaoVerSenha);
             panel1.Controls.Add(picLoginIconUser);
@@ -62,6 +64,18 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(270, 400);
             panel1.TabIndex = 0;
+            // 
+            // lblRedefinirSenha
+            // 
+            lblRedefinirSenha.Font = new Font("Montserrat", 8.999999F, FontStyle.Underline, GraphicsUnit.Point, 0);
+            lblRedefinirSenha.ForeColor = Color.FromArgb(190, 169, 137);
+            lblRedefinirSenha.Location = new Point(34, 355);
+            lblRedefinirSenha.Name = "lblRedefinirSenha";
+            lblRedefinirSenha.Size = new Size(202, 23);
+            lblRedefinirSenha.TabIndex = 12;
+            lblRedefinirSenha.Text = "esqueci a senha / redefinir senha";
+            lblRedefinirSenha.TextAlign = ContentAlignment.MiddleCenter;
+            lblRedefinirSenha.Click += lblRedefinirSenha_Click;
             // 
             // lbCaps
             // 
@@ -233,5 +247,6 @@
         private PictureBox picLoginIconUser;
         private PictureBox picLoginNaoVerSenha;
         private Label lbCaps;
+        private Label lblRedefinirSenha;
     }
 }

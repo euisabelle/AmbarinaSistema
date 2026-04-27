@@ -33,6 +33,7 @@
             progressBar1 = new ProgressBar();
             lbSplashCarregando = new Label();
             tmSplash = new System.Windows.Forms.Timer(components);
+            lblPular = new Label();
             ((System.ComponentModel.ISupportInitialize)picSplashLogo).BeginInit();
             SuspendLayout();
             // 
@@ -71,12 +72,28 @@
             tmSplash.Enabled = true;
             tmSplash.Tick += tmSplash_Tick;
             // 
+            // lblPular
+            // 
+            lblPular.BackColor = Color.Transparent;
+            lblPular.Cursor = Cursors.Hand;
+            lblPular.Dock = DockStyle.Bottom;
+            lblPular.Font = new Font("Montserrat", 8.249999F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblPular.ForeColor = SystemColors.WindowFrame;
+            lblPular.Location = new Point(0, 369);
+            lblPular.Name = "lblPular";
+            lblPular.Size = new Size(600, 31);
+            lblPular.TabIndex = 3;
+            lblPular.Text = "pular";
+            lblPular.TextAlign = ContentAlignment.MiddleCenter;
+            lblPular.Click += lblPular_Click;
+            // 
             // FrmSplash
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(242, 233, 216);
             ClientSize = new Size(600, 400);
+            Controls.Add(lblPular);
             Controls.Add(lbSplashCarregando);
             Controls.Add(progressBar1);
             Controls.Add(picSplashLogo);
@@ -95,5 +112,6 @@
         private ProgressBar progressBar1;
         private Label lbSplashCarregando;
         private System.Windows.Forms.Timer tmSplash;
+        private Label lblPular;
     }
 }

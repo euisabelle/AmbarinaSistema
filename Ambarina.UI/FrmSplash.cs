@@ -8,6 +8,9 @@ namespace Ambarina.UI
         }
 
         int ciclos = 0;
+
+        FrmLogin telaLogin = new FrmLogin();
+
         private void tmSplash_Tick(object sender, EventArgs e)
         {
             ciclos++;
@@ -53,12 +56,17 @@ namespace Ambarina.UI
                 tmSplash.Stop();
 
                 // Cria a instância da tela de login
-                FrmLogin telaLogin = new FrmLogin();
 
                 // Mostra o login e esconde o splash
                 telaLogin.Show();
                 this.Hide();
             }
+        }
+
+        private void lblPular_Click(object sender, EventArgs e)
+        {
+            telaLogin.Show();
+            this.Hide();
         }
     }
 }

@@ -188,5 +188,10 @@ namespace Ambarina.UI
                 btnLoginEntrar.PerformClick(); // Executa o clique do botão via código
             }
         }
+
+        private void lblRedefinirSenha_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Função de redefinir senha ainda não implementada.", "Em Breve", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
     }
 }
