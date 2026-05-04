@@ -1,5 +1,6 @@
 ﻿using Ambarina.BLL;
 using Ambarina.DTO;
+using Ambarina.DAL;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,7 @@ namespace Ambarina.UI
     public partial class FrmMenuPrincipal : Form
     {
         int idInsumoSelecionado = 0;
+        int idReceitaSelecionada = 0; // Para controlar se estamos Editando ou Salvando uma nova receita
 
         public FrmMenuPrincipal()
         {
@@ -146,6 +148,9 @@ namespace Ambarina.UI
 
             //atualizar grid almoxarifado
             AtualizarGrid();
+
+            //carregar cmb de insumos na produção
+            CarregarComboInsumos();
         }
 
         private void lbLoginExit_Click(object sender, EventArgs e)
@@ -168,7 +173,13 @@ namespace Ambarina.UI
 
             AtualizarCabecalho("PRODUÇÃO", "Formulação de velas e registro de fabricação com baixa de estoque.");
 
+            CarregarComboInsumos();
+
             AbrirPainel(pnlViewProducao);
+
+            CarregarComboProdutos();
+
+            CarregarProdutosBase();
         }
 
         private void btnNavEstoque_Click(object sender, EventArgs e)
@@ -254,38 +265,43 @@ namespace Ambarina.UI
         {
             try
             {
-                // 1. Criar o objeto e preencher com os dados da tela
+                //Pegamos os valores brutos da tela
+                decimal qtdTotal = Convert.ToDecimal(txtQtdInicial.Text);
+                decimal custoTotal = Convert.ToDecimal(txtCustoInicial.Text);
+
+                //Calculamos quanto custa 1 unidade (1g ou 1ml)
+                // Se a pessoa digitar 100g e 55 reais, o custo unitário será 0,55
+                decimal custoFracionado = custoTotal / qtdTotal;
+
+                //Preencher o DTO com o valor calculado
                 InsumoDTO novoInsumo = new InsumoDTO();
                 novoInsumo.Nome = txtNomeInsumo.Text;
                 novoInsumo.Categoria = cmbCategoria.Text;
                 novoInsumo.UnidadeMedida = cmbUnidade.Text;
-                // Importante: usar nomes consistentes com DTO
-                novoInsumo.QtdeInicial = Convert.ToDecimal(txtQtdInicial.Text);
-                novoInsumo.CustoInicial = Convert.ToDecimal(txtCustoInicial.Text);
+
+                //Aqui salvamos a quantidade real (ex: 100) e o custo de cada grama (ex: 0,55)
+                novoInsumo.QtdeInicial = qtdTotal;
+                novoInsumo.CustoInicial = custoFracionado;
+
                 novoInsumo.EstoqueMinimo = Convert.ToDecimal(txtEstoqueMinimo.Text);
 
                 InsumoBLL bll = new InsumoBLL();
 
-                // 2. Lógica de decisão: Salvar ou Editar
+                //Lógica de decisão (Salvar ou Editar)
                 if (idInsumoSelecionado == 0)
                 {
-                    // Salvar novo
                     bll.SalvarInsumo(novoInsumo);
                     MessageBox.Show("Insumo cadastrado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    // Editar existente
                     novoInsumo.Id = idInsumoSelecionado;
                     bll.EditarInsumo(novoInsumo);
                     MessageBox.Show("Insumo atualizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    // Resetar para o modo "Salvar"
                     idInsumoSelecionado = 0;
                     btnSalvarInsumo.Text = "SALVAR INSUMO";
                 }
 
-                // 3. Atualizar a visualização
                 AtualizarGrid();
                 LimparCamposAlmoxarifado();
             }
@@ -353,5 +369,224 @@ namespace Ambarina.UI
                 btnAdicionarInsumo.Text = "ATUALIZAR INSUMO"; // Muda o visual do botão
             }
         }
+
+        ////PRODUCAO
+        private void CarregarProdutosBase()
+        {
+            try
+            {
+                ProdutoBLL bll = new ProdutoBLL();
+                // Buscamos os modelos cadastrados no catálogo
+                cmbProdutoBase.DataSource = bll.ListarProdutosCombo();
+                cmbProdutoBase.DisplayMember = "nome";
+                cmbProdutoBase.ValueMember = "id_produto";
+                cmbProdutoBase.SelectedIndex = -1;
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+        private void CarregarComboInsumos()
+        {
+            try
+            {
+                InsumoBLL bll = new InsumoBLL();
+                DataTable dt = bll.ListarInsumosCombo();
+
+                cmbInsumo.DataSource = dt;
+                cmbInsumo.DisplayMember = "nome";       // Nome que aparece na lista
+                cmbInsumo.ValueMember = "id_insumo";     // ID que fica "escondido" por trás
+
+                cmbInsumo.SelectedIndex = -1; // Inicia vazio para não selecionar o primeiro item direto
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar insumos na produção: " + ex.Message);
+            }
+        }
+        private void CarregarComboProdutos()
+        {
+            try
+            {
+                ProdutoBLL bll = new ProdutoBLL();
+                cmbProduto.DataSource = bll.ListarProdutosCombo();
+                cmbProduto.DisplayMember = "nome";
+                cmbProduto.ValueMember = "id_produto";
+                cmbProduto.SelectedIndex = -1;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar produtos: " + ex.Message);
+            }
+        }
+
+        private void ExecutarProducao()
+        {
+            try
+            {
+                //Pegar os dados da tela
+                int idInsumo = Convert.ToInt32(cmbInsumo.SelectedValue);
+                decimal qtdInsumo = Convert.ToDecimal(txtQtdInsumo.Text);
+
+                int idProduto = Convert.ToInt32(cmbProduto.SelectedValue);
+                int qtdProduzida = Convert.ToInt32(txtQtdeProduzida.Text);
+
+                //Chamar as BLLs
+                InsumoBLL insumoBll = new InsumoBLL();
+                ProdutoBLL produtoBll = new ProdutoBLL();
+
+                // 3. Executar as ações no banco
+                insumoBll.RegistrarConsumoInsumo(idInsumo, qtdInsumo); // Baixa no Insumo
+                produtoBll.AdicionarEstoqueProduto(idProduto, qtdProduzida); // Aumenta no Produto
+
+                MessageBox.Show("Produção finalizada! Estoques atualizados com sucesso.", "Ambarina", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                //Limpar e atualizar
+                txtQtdInsumo.Clear();
+                txtQtdeProduzida.Clear();
+                AtualizarGrid(); // Atualiza a grid do almoxarifado para você ver a baixa na hora
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao processar produção: " + ex.Message);
+            }
+        }
+        private void btnFinalizarProducao_Click(object sender, EventArgs e)
+        {
+            ExecutarProducao();
+        }
+
+        private void AtualizarGradeReceitas()
+        {
+            try
+            {
+                ReceitaBLL bll = new ReceitaBLL();
+                dgvListaReceitas.DataSource = bll.ListarReceitas();
+
+                // Formatação básica
+                dgvListaReceitas.Columns["id_receita"].Visible = false; // Esconde o ID
+                dgvListaReceitas.Columns["Produto"].Width = 150;
+                dgvListaReceitas.Columns["Aroma"].Width = 150;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar lista de receitas: " + ex.Message);
+            }
+        }
+
+        private void CarregarInsumosDaReceita(int idReceita)
+        {
+            try
+            {
+                // Aqui usamos a BLL de Itens ou a própria ReceitaBLL 
+                // para buscar os insumos vinculados a esse ID
+                ReceitaBLL bll = new ReceitaBLL();
+
+                dgvItensReceita.DataSource = bll.ListarItensDaReceita(idReceita);
+
+                // Ajuste das colunas da grade da direita
+                if (dgvItensReceita.Columns.Contains("id_insumo"))
+                    dgvItensReceita.Columns["id_insumo"].Visible = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar insumos: " + ex.Message);
+            }
+        }
+
+        private void dgvListaReceitas_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                // 1. Pega o ID da receita da linha clicada
+                int idReceitaSelecionada = Convert.ToInt32(dgvListaReceitas.Rows[e.RowIndex].Cells["id_receita"].Value);
+
+                // 2. Chama o método que já tínhamos para carregar os insumos na grade da direita
+                // Você precisará passar esse ID para a sua DAL/BLL de insumos da receita
+                CarregarInsumosDaReceita(idReceitaSelecionada);
+
+                // 3. Preenche o Aroma e Produto na parte de BAIXO (Produção) automaticamente
+                cmbProduto.Text = dgvListaReceitas.Rows[e.RowIndex].Cells["Produto"].Value.ToString();
+                cmbAroma.Text = dgvListaReceitas.Rows[e.RowIndex].Cells["Aroma"].Value.ToString();
+            }
+        }
+
+        private void dgvListaReceitas_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            // Pega o ID da linha (Certifique-se que o nome da coluna no banco/grid seja id_receita)
+            int id = Convert.ToInt32(dgvListaReceitas.Rows[e.RowIndex].Cells["id_receita"].Value);
+
+            // Lógica Excluir (Certifique-se que o Name da coluna de botão seja colExcluirReceita)
+            if (dgvListaReceitas.Columns[e.ColumnIndex].Name == "colExcluirReceita")
+            {
+                if (MessageBox.Show("Deseja excluir esta receita?", "Ambarina", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    new ReceitaBLL().ExcluirReceita(id);
+                    AtualizarGradeReceitas(); // Sua função que dá o Refresh na grid
+                }
+            }
+
+            // Lógica Editar (Certifique-se que o Name da coluna de botão seja colEditarReceita)
+            if (dgvListaReceitas.Columns[e.ColumnIndex].Name == "colEditarReceita")
+            {
+                // 1. Muda a cor do painel ou sinaliza a edição (opcional)
+                // pnlReceitas.BackColor = Color.FromArgb(255, 252, 240); 
+
+                // 2. Guarda o ID para o Update
+                idReceitaSelecionada = id;
+
+                // 3. Joga os dados de volta para os campos de cima
+                cmbProdutoBase.Text = dgvListaReceitas.Rows[e.RowIndex].Cells["Produto"].Value.ToString();
+                txtAroma.Text = dgvListaReceitas.Rows[e.RowIndex].Cells["Aroma"].Value.ToString();
+
+                // 4. Carrega os insumos dessa receita na grid lateral (aquela da direita)
+                CarregarInsumosDaReceita(id);
+
+                // 5. Muda o visual do botão de salvar
+                btnSalvarReceitaCompleta.Text = "ATUALIZAR RECEITA";
+            }
+        }
+
+
+
+        ////ESTOQUE OU PRONTA ENTREGA
+        private void btnSalvarProduto_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // 1. Instanciar o DTO com os dados da tela
+                ProdutoDTO novoModelo = new ProdutoDTO();
+                novoModelo.Nome = txtNomeProduto.Text; // Ex: Vela Aurora 180g
+                novoModelo.Categoria = cmbCategoriaProduto.Text; // Ex: Vela
+
+                // Conversão com tratamento para evitar erros se o campo estiver vazio
+                novoModelo.MargemLucro = string.IsNullOrEmpty(txtMargemLucro.Text) ? 0 : Convert.ToDecimal(txtMargemLucro.Text);
+                novoModelo.EstoqueMinimo = string.IsNullOrEmpty(txtEstoqueMin.Text) ? 0 : Convert.ToInt32(txtEstoqueMin.Text);
+
+                // 2. Chamar a BLL para salvar
+                ProdutoBLL bll = new ProdutoBLL();
+                bll.SalvarProduto(novoModelo);
+
+                // 3. Feedback e Limpeza
+                MessageBox.Show("Modelo de produto cadastrado no catálogo com sucesso!", "Ambarina", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                LimparCamposCadastroProduto();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao cadastrar modelo: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Método auxiliar para limpar os campos após cadastrar
+        private void LimparCamposCadastroProduto()
+        {
+            txtNomeProduto.Clear();
+            cmbCategoriaProduto.SelectedIndex = -1;
+            txtMargemLucro.Clear();
+            txtEstoqueMin.Clear();
+        }
+
+        
     }
 }

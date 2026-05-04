@@ -26,7 +26,29 @@ namespace Ambarina.BLL
         {
             return insumoDAL.ListarInsumos();
         }
-        public void ExcluirInsumo(int id) { insumoDAL.ExcluirInsumo(id); }
-        public void EditarInsumo(InsumoDTO insumo) { insumoDAL.EditarInsumo(insumo); }
+        public void ExcluirInsumo(int id) 
+        { 
+            insumoDAL.ExcluirInsumo(id); 
+        }
+        public void EditarInsumo(InsumoDTO insumo) 
+        { 
+            insumoDAL.EditarInsumo(insumo); 
+        }
+
+        public DataTable ListarInsumosCombo()
+        {
+            return insumoDAL.ListarParaCombo();
+        }
+        public void RegistrarConsumoInsumo(int id, decimal qtd)
+        {
+            //Verificar aqui se a quantidade é maior que zero
+            if (qtd <= 0)
+            {
+                throw new Exception("A quantidade de insumo deve ser maior que zero.");
+            }
+
+            // Chama o método que já existe na InsumoDAL
+            insumoDAL.BaixarEstoque(id, qtd);
+        }
     }
 }

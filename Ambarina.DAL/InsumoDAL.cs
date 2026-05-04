@@ -104,5 +104,43 @@ namespace Ambarina.DAL
             }
             finally { conexao.FecharConexao(); }
         }
+
+        public void BaixarEstoque(int idInsumo, decimal quantidade)
+        {
+            try
+            {
+                conexao.AbrirConexao();
+                // SQL que diminui o estoque atual
+                string sql = "UPDATE insumos SET estoque_atual = estoque_atual - @qtd WHERE id_insumo = @id";
+                MySqlCommand cmd = new MySqlCommand(sql, conexao.conectar);
+                cmd.Parameters.AddWithValue("@qtd", quantidade);
+                cmd.Parameters.AddWithValue("@id", idInsumo);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao baixar estoque: " + ex.Message);
+            }
+            finally { conexao.FecharConexao(); }
+        }
+
+        public DataTable ListarParaCombo()
+        {
+            try
+            {
+                conexao.AbrirConexao();
+                DataTable dt = new DataTable();
+                // Buscamos apenas o ID e o Nome para não pesar a memória
+                string sql = "SELECT id_insumo, nome FROM insumos ORDER BY nome ASC";
+                MySqlDataAdapter da = new MySqlDataAdapter(sql, conexao.conectar);
+                da.Fill(dt);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao carregar lista de insumos: " + ex.Message);
+            }
+            finally { conexao.FecharConexao(); }
+        }
     }
 }
