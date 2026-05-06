@@ -1013,6 +1013,7 @@
             btnSalvarReceitaCompleta.TabIndex = 22;
             btnSalvarReceitaCompleta.Text = "SALVAR RECEITA";
             btnSalvarReceitaCompleta.UseVisualStyleBackColor = false;
+            btnSalvarReceitaCompleta.Click += btnSalvarReceitaCompleta_Click;
             // 
             // btnAdicionarInsumo
             // 
@@ -1027,6 +1028,7 @@
             btnAdicionarInsumo.TabIndex = 20;
             btnAdicionarInsumo.Text = "ADICIONAR INSUMO";
             btnAdicionarInsumo.UseVisualStyleBackColor = false;
+            btnAdicionarInsumo.Click += btnAdicionarInsumo_Click;
             // 
             // txtQtdInsumo
             // 
@@ -1623,7 +1625,7 @@
             lblValorEntradas.ForeColor = Color.FromArgb(15, 67, 16);
             lblValorEntradas.Location = new Point(15, 40);
             lblValorEntradas.Name = "lblValorEntradas";
-            lblValorEntradas.Size = new Size(108, 38);
+            lblValorEntradas.Size = new Size(115, 38);
             lblValorEntradas.TabIndex = 1;
             lblValorEntradas.Text = "R$ 0,00";
             // 
@@ -1634,7 +1636,7 @@
             lblTituloEntradas.ForeColor = Color.FromArgb(190, 138, 58);
             lblTituloEntradas.Location = new Point(15, 15);
             lblTituloEntradas.Name = "lblTituloEntradas";
-            lblTituloEntradas.Size = new Size(77, 18);
+            lblTituloEntradas.Size = new Size(85, 18);
             lblTituloEntradas.TabIndex = 0;
             lblTituloEntradas.Text = "ENTRADAS";
             // 
@@ -1669,7 +1671,7 @@
             lblValorSaidas.ForeColor = Color.FromArgb(15, 67, 16);
             lblValorSaidas.Location = new Point(15, 40);
             lblValorSaidas.Name = "lblValorSaidas";
-            lblValorSaidas.Size = new Size(108, 38);
+            lblValorSaidas.Size = new Size(115, 38);
             lblValorSaidas.TabIndex = 1;
             lblValorSaidas.Text = "R$ 0,00";
             // 
@@ -1680,7 +1682,7 @@
             lblTituloSaidas.ForeColor = Color.FromArgb(190, 138, 58);
             lblTituloSaidas.Location = new Point(15, 15);
             lblTituloSaidas.Name = "lblTituloSaidas";
-            lblTituloSaidas.Size = new Size(54, 18);
+            lblTituloSaidas.Size = new Size(60, 18);
             lblTituloSaidas.TabIndex = 0;
             lblTituloSaidas.Text = "SAÍDAS";
             // 
@@ -1706,7 +1708,7 @@
             lblFluxoDeCaixa.ForeColor = Color.FromArgb(15, 67, 16);
             lblFluxoDeCaixa.Location = new Point(-5, 1);
             lblFluxoDeCaixa.Name = "lblFluxoDeCaixa";
-            lblFluxoDeCaixa.Size = new Size(149, 25);
+            lblFluxoDeCaixa.Size = new Size(148, 25);
             lblFluxoDeCaixa.TabIndex = 3;
             lblFluxoDeCaixa.Text = "FLUXO DE CAIXA";
             // 
@@ -1904,7 +1906,7 @@
             lblValorSaldo.ForeColor = Color.FromArgb(15, 67, 16);
             lblValorSaldo.Location = new Point(15, 40);
             lblValorSaldo.Name = "lblValorSaldo";
-            lblValorSaldo.Size = new Size(108, 38);
+            lblValorSaldo.Size = new Size(115, 38);
             lblValorSaldo.TabIndex = 1;
             lblValorSaldo.Text = "R$ 0,00";
             // 
@@ -1915,7 +1917,7 @@
             lblTituloSaldo.ForeColor = Color.FromArgb(190, 138, 58);
             lblTituloSaldo.Location = new Point(15, 15);
             lblTituloSaldo.Name = "lblTituloSaldo";
-            lblTituloSaldo.Size = new Size(95, 18);
+            lblTituloSaldo.Size = new Size(106, 18);
             lblTituloSaldo.TabIndex = 0;
             lblTituloSaldo.Text = "SALDO ATUAL";
             // 
@@ -2594,7 +2596,7 @@
             lblValFaturamento.ForeColor = Color.FromArgb(15, 67, 16);
             lblValFaturamento.Location = new Point(15, 40);
             lblValFaturamento.Name = "lblValFaturamento";
-            lblValFaturamento.Size = new Size(108, 38);
+            lblValFaturamento.Size = new Size(115, 38);
             lblValFaturamento.TabIndex = 1;
             lblValFaturamento.Text = "R$ 0,00";
             lblValFaturamento.MouseEnter += pnlCardInsumos_MouseEnter;
@@ -2607,7 +2609,7 @@
             lblCapFaturamento.ForeColor = Color.FromArgb(190, 138, 58);
             lblCapFaturamento.Location = new Point(15, 15);
             lblCapFaturamento.Name = "lblCapFaturamento";
-            lblCapFaturamento.Size = new Size(160, 18);
+            lblCapFaturamento.Size = new Size(178, 18);
             lblCapFaturamento.TabIndex = 0;
             lblCapFaturamento.Text = "FATURAMENTO MENSAL";
             lblCapFaturamento.MouseEnter += pnlCardInsumos_MouseEnter;
@@ -2648,7 +2650,7 @@
             lblValInsumos.ForeColor = Color.FromArgb(15, 67, 16);
             lblValInsumos.Location = new Point(15, 40);
             lblValInsumos.Name = "lblValInsumos";
-            lblValInsumos.Size = new Size(110, 38);
+            lblValInsumos.Size = new Size(117, 38);
             lblValInsumos.TabIndex = 1;
             lblValInsumos.Text = "0 ITENS";
             lblValInsumos.MouseEnter += pnlCardInsumos_MouseEnter;
@@ -2661,7 +2663,7 @@
             lblCapInsumos.ForeColor = Color.FromArgb(190, 138, 58);
             lblCapInsumos.Location = new Point(15, 15);
             lblCapInsumos.Name = "lblCapInsumos";
-            lblCapInsumos.Size = new Size(139, 18);
+            lblCapInsumos.Size = new Size(156, 18);
             lblCapInsumos.TabIndex = 0;
             lblCapInsumos.Text = "ALERTAS DE INSUMO";
             lblCapInsumos.MouseEnter += pnlCardInsumos_MouseEnter;
@@ -2702,7 +2704,7 @@
             lblValEstoque.ForeColor = Color.FromArgb(15, 67, 16);
             lblValEstoque.Location = new Point(15, 40);
             lblValEstoque.Name = "lblValEstoque";
-            lblValEstoque.Size = new Size(181, 38);
+            lblValEstoque.Size = new Size(191, 38);
             lblValEstoque.TabIndex = 1;
             lblValEstoque.Text = "0 PRODUTOS";
             lblValEstoque.MouseEnter += pnlCardInsumos_MouseEnter;
@@ -2715,7 +2717,7 @@
             lblCapEstoque.ForeColor = Color.FromArgb(190, 138, 58);
             lblCapEstoque.Location = new Point(15, 15);
             lblCapEstoque.Name = "lblCapEstoque";
-            lblCapEstoque.Size = new Size(125, 18);
+            lblCapEstoque.Size = new Size(139, 18);
             lblCapEstoque.TabIndex = 0;
             lblCapEstoque.Text = "PRONTA ENTREGA";
             lblCapEstoque.MouseEnter += pnlCardInsumos_MouseEnter;

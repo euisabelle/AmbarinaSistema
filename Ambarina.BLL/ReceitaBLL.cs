@@ -35,5 +35,11 @@ namespace Ambarina.BLL
         }
 
         // Aqui também entrarão os métodos de Salvar e Editar Receita
+
+        public void SalvarReceitaCompleta(ReceitaDTO receita, List<ItensReceitaDTO> itens)
+        {
+            // Aqui você chamará a sua DAL para salvar a receita e depois um loop para os itens
+            //receitaDAL.SalvarNovaReceita(receita, itens);
+        }
     }
 }

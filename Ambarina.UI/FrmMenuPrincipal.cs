@@ -421,29 +421,45 @@ namespace Ambarina.UI
         private void ExecutarProducao()
         {
             try
-            {
-                //Pegar os dados da tela
-                int idInsumo = Convert.ToInt32(cmbInsumo.SelectedValue);
-                decimal qtdInsumo = Convert.ToDecimal(txtQtdInsumo.Text);
+                {
+                //Validação e Conversão Segura dos dados da tela
+                if (cmbInsumo.SelectedValue == null || cmbProduto.SelectedValue == null)
+                {
+                    MessageBox.Show("Selecione o insumo e o produto antes de finalizar.");
+                    return;
+                }
 
+                int idInsumo = Convert.ToInt32(cmbInsumo.SelectedValue);
                 int idProduto = Convert.ToInt32(cmbProduto.SelectedValue);
-                int qtdProduzida = Convert.ToInt32(txtQtdeProduzida.Text);
+
+                //Uso do TryParse para evitar erros de formato (campo vazio ou letras)
+                if (!decimal.TryParse(txtQtdInsumo.Text, out decimal qtdInsumo))
+                {
+                    MessageBox.Show("Quantidade de insumo inválida.");
+                    return;
+                }
+
+                if (!int.TryParse(txtQtdeProduzida.Text, out int qtdProduzida))
+                {
+                    MessageBox.Show("Quantidade produzida inválida.");
+                    return;
+                }
 
                 //Chamar as BLLs
                 InsumoBLL insumoBll = new InsumoBLL();
                 ProdutoBLL produtoBll = new ProdutoBLL();
 
-                // 3. Executar as ações no banco
-                insumoBll.RegistrarConsumoInsumo(idInsumo, qtdInsumo); // Baixa no Insumo
-                produtoBll.AdicionarEstoqueProduto(idProduto, qtdProduzida); // Aumenta no Produto
+                //Executar as ações no banco
+                insumoBll.RegistrarConsumoInsumo(idInsumo, qtdInsumo);
+                produtoBll.AdicionarEstoqueProduto(idProduto, qtdProduzida);
 
                 MessageBox.Show("Produção finalizada! Estoques atualizados com sucesso.", "Ambarina", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 //Limpar e atualizar
                 txtQtdInsumo.Clear();
                 txtQtdeProduzida.Clear();
-                AtualizarGrid(); // Atualiza a grid do almoxarifado para você ver a baixa na hora
-            }
+                AtualizarGrid();
+                }
             catch (Exception ex)
             {
                 MessageBox.Show("Erro ao processar produção: " + ex.Message);
@@ -494,19 +510,20 @@ namespace Ambarina.UI
 
         private void dgvListaReceitas_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
-            {
-                // 1. Pega o ID da receita da linha clicada
-                int idReceitaSelecionada = Convert.ToInt32(dgvListaReceitas.Rows[e.RowIndex].Cells["id_receita"].Value);
+            //Pega os dados da linha clicada
+            int idReceitaSelecionada = Convert.ToInt32(dgvListaReceitas.Rows[e.RowIndex].Cells["id_receita"].Value);
+            string produtoNome = dgvListaReceitas.Rows[e.RowIndex].Cells["Produto"].Value.ToString();
+            string aromaNome = dgvListaReceitas.Rows[e.RowIndex].Cells["Aroma"].Value.ToString();
 
-                // 2. Chama o método que já tínhamos para carregar os insumos na grade da direita
-                // Você precisará passar esse ID para a sua DAL/BLL de insumos da receita
-                CarregarInsumosDaReceita(idReceitaSelecionada);
+            //Carrega os insumos na grid da direita (OK)
+            CarregarInsumosDaReceita(idReceitaSelecionada);
 
-                // 3. Preenche o Aroma e Produto na parte de BAIXO (Produção) automaticamente
-                cmbProduto.Text = dgvListaReceitas.Rows[e.RowIndex].Cells["Produto"].Value.ToString();
-                cmbAroma.Text = dgvListaReceitas.Rows[e.RowIndex].Cells["Aroma"].Value.ToString();
-            }
+            //Preenche a área de PRODUÇÃO (Baixo)
+            cmbProduto.Text = produtoNome;
+            cmbAroma.Text = aromaNome;
+
+            //Já focar o cursor na quantidade para ganhar tempo
+            txtQtdeProduzida.Focus();
         }
 
         private void dgvListaReceitas_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -529,24 +546,86 @@ namespace Ambarina.UI
             // Lógica Editar (Certifique-se que o Name da coluna de botão seja colEditarReceita)
             if (dgvListaReceitas.Columns[e.ColumnIndex].Name == "colEditarReceita")
             {
-                // 1. Muda a cor do painel ou sinaliza a edição (opcional)
-                // pnlReceitas.BackColor = Color.FromArgb(255, 252, 240); 
+                //Muda a cor do painel ou sinaliza a edição (opcional)
+                //pnlReceitas.BackColor = Color.FromArgb(255, 252, 240); 
 
-                // 2. Guarda o ID para o Update
+                //Guarda o ID para o Update
                 idReceitaSelecionada = id;
 
-                // 3. Joga os dados de volta para os campos de cima
+                //Joga os dados de volta para os campos de cima
                 cmbProdutoBase.Text = dgvListaReceitas.Rows[e.RowIndex].Cells["Produto"].Value.ToString();
                 txtAroma.Text = dgvListaReceitas.Rows[e.RowIndex].Cells["Aroma"].Value.ToString();
 
-                // 4. Carrega os insumos dessa receita na grid lateral (aquela da direita)
+                //Carrega os insumos dessa receita na grid lateral (aquela da direita)
                 CarregarInsumosDaReceita(id);
 
-                // 5. Muda o visual do botão de salvar
+                //Muda o visual do botão de salvar
                 btnSalvarReceitaCompleta.Text = "ATUALIZAR RECEITA";
             }
         }
+        private void btnAdicionarInsumo_Click(object sender, EventArgs e)
+        {
+            //Adiciona o insumo selecionado na grid da direita (dgvInsumosReceita)
+            //sem salvar no banco ainda, apenas visualmente.
+            if (cmbInsumo.SelectedIndex != -1 && !string.IsNullOrEmpty(txtQtdInsumo.Text))
+            {
+                dgvItensReceita.Rows.Add(cmbInsumo.Text, txtQtdInsumo.Text, cmbUnidadeReceita.Text);
+            }
+            LimparCamposReceita();
+        }
 
+        private void btnSalvarReceitaCompleta_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //Validação básica
+                if (cmbProdutoBase.SelectedIndex == -1 || string.IsNullOrEmpty(txtAroma.Text))
+                {
+                    MessageBox.Show("Selecione um Produto Base e digite o Aroma!", "Ambarina");
+                    return;
+                }
+
+                //Criar o objeto DTO da Receita
+                ReceitaDTO receita = new ReceitaDTO();
+                receita.IdProduto = Convert.ToInt32(cmbProdutoBase.SelectedValue);
+                receita.AromaPadrao = txtAroma.Text;
+
+                //Criar a lista de insumos baseada na Grid da direita
+                List<ItensReceitaDTO> listaItens = new List<ItensReceitaDTO>();
+                foreach (DataGridViewRow row in dgvItensReceita.Rows)
+                {
+                    if (row.Cells[0].Value != null)
+                    {
+                        listaItens.Add(new ItensReceitaDTO
+                        {
+                            NomeInsumo = row.Cells["Insumo"].Value.ToString(),
+                            Quantidade = Convert.ToDecimal(row.Cells["Qtd"].Value)
+                        });
+                    }
+                }
+
+                //Chamar a BLL para salvar tudo de uma vez
+                ReceitaBLL bll = new ReceitaBLL();
+                bll.SalvarReceitaCompleta(receita, listaItens);
+
+                MessageBox.Show("Receita de " + txtAroma.Text + " salva com sucesso!", "Ambarina");
+
+                //Limpar e atualizar
+                AtualizarGradeReceitas();
+                LimparCamposReceita();
+            }
+            catch (Exception ex) { MessageBox.Show("Erro ao salvar: " + ex.Message); }
+        }
+
+        private void LimparCamposReceita()
+        {
+            txtAroma.Clear();
+            txtQtdInsumo.Clear();
+            cmbProdutoBase.SelectedIndex = -1;
+            cmbInsumo.SelectedIndex = -1;
+            cmbUnidadeReceita.SelectedIndex = -1;
+            txtNomeInsumo.Focus();
+        }
 
 
         ////ESTOQUE OU PRONTA ENTREGA
