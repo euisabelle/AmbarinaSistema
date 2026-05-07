@@ -872,6 +872,7 @@
             dgvItensReceita.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvItensReceita.Size = new Size(592, 280);
             dgvItensReceita.TabIndex = 21;
+            dgvItensReceita.CellContentClick += dgvItensReceita_CellContentClick;
             // 
             // dataGridViewTextBoxColID
             // 

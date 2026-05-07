@@ -421,7 +421,7 @@ namespace Ambarina.UI
         private void ExecutarProducao()
         {
             try
-                {
+            {
                 //Validação e Conversão Segura dos dados da tela
                 if (cmbInsumo.SelectedValue == null || cmbProduto.SelectedValue == null)
                 {
@@ -459,7 +459,7 @@ namespace Ambarina.UI
                 txtQtdInsumo.Clear();
                 txtQtdeProduzida.Clear();
                 AtualizarGrid();
-                }
+            }
             catch (Exception ex)
             {
                 MessageBox.Show("Erro ao processar produção: " + ex.Message);
@@ -565,13 +565,22 @@ namespace Ambarina.UI
         }
         private void btnAdicionarInsumo_Click(object sender, EventArgs e)
         {
-            //Adiciona o insumo selecionado na grid da direita (dgvInsumosReceita)
-            //sem salvar no banco ainda, apenas visualmente.
             if (cmbInsumo.SelectedIndex != -1 && !string.IsNullOrEmpty(txtQtdInsumo.Text))
             {
-                dgvItensReceita.Rows.Add(cmbInsumo.Text, txtQtdInsumo.Text, cmbUnidadeReceita.Text);
+                //Adiciona uma linha vazia e pega o índice dela
+                int n = dgvItensReceita.Rows.Add();
+
+                //Preenche cada célula pelo NOME da coluna (ajuste os nomes se forem diferentes no Designer)
+                dgvItensReceita.Rows[n].Cells["colInsumo"].Value = cmbInsumo.Text;
+                dgvItensReceita.Rows[n].Cells["colQtd"].Value = txtQtdInsumo.Text;
+                dgvItensReceita.Rows[n].Cells["colUnidade"].Value = cmbUnidadeReceita.Text;
+
+                //Limpa apenas os campos de insumo, mantendo o Produto Base e Aroma intactos
+                cmbInsumo.SelectedIndex = -1;
+                txtQtdInsumo.Clear();
+                cmbUnidadeReceita.SelectedIndex = -1;
+                cmbInsumo.Focus();
             }
-            LimparCamposReceita();
         }
 
         private void btnSalvarReceitaCompleta_Click(object sender, EventArgs e)
@@ -627,26 +636,48 @@ namespace Ambarina.UI
             txtNomeInsumo.Focus();
         }
 
+        private void dgvItensReceita_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            //Lógica para EXCLUIR o insumo da lista temporária
+            if (dgvItensReceita.Columns[e.ColumnIndex].Name == "colExcluirItem") // Ajuste para o nome da sua coluna de X
+            {
+                dgvItensReceita.Rows.RemoveAt(e.RowIndex);
+            }
+
+            //Lógica para EDITAR (devolve para os campos e remove da grid)
+            if (dgvItensReceita.Columns[e.ColumnIndex].Name == "colEditarItem") // Ajuste para o nome da sua coluna de Lápis
+            {
+                cmbInsumo.Text = dgvItensReceita.Rows[e.RowIndex].Cells["Insumo"].Value.ToString();
+                txtQtdInsumo.Text = dgvItensReceita.Rows[e.RowIndex].Cells["Qtd"].Value.ToString();
+                cmbUnidadeReceita.Text = dgvItensReceita.Rows[e.RowIndex].Cells["Unid"].Value.ToString();
+
+                dgvItensReceita.Rows.RemoveAt(e.RowIndex);
+                txtQtdInsumo.Focus();
+            }
+        }
+
 
         ////ESTOQUE OU PRONTA ENTREGA
         private void btnSalvarProduto_Click(object sender, EventArgs e)
         {
             try
             {
-                // 1. Instanciar o DTO com os dados da tela
+                //Instanciar o DTO com os dados da tela
                 ProdutoDTO novoModelo = new ProdutoDTO();
                 novoModelo.Nome = txtNomeProduto.Text; // Ex: Vela Aurora 180g
                 novoModelo.Categoria = cmbCategoriaProduto.Text; // Ex: Vela
 
-                // Conversão com tratamento para evitar erros se o campo estiver vazio
+                //Conversão com tratamento para evitar erros se o campo estiver vazio
                 novoModelo.MargemLucro = string.IsNullOrEmpty(txtMargemLucro.Text) ? 0 : Convert.ToDecimal(txtMargemLucro.Text);
                 novoModelo.EstoqueMinimo = string.IsNullOrEmpty(txtEstoqueMin.Text) ? 0 : Convert.ToInt32(txtEstoqueMin.Text);
 
-                // 2. Chamar a BLL para salvar
+                //Chamar a BLL para salvar
                 ProdutoBLL bll = new ProdutoBLL();
                 bll.SalvarProduto(novoModelo);
 
-                // 3. Feedback e Limpeza
+                //Feedback e Limpeza
                 MessageBox.Show("Modelo de produto cadastrado no catálogo com sucesso!", "Ambarina", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 LimparCamposCadastroProduto();
