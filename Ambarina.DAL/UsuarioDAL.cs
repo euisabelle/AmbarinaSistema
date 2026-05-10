@@ -37,5 +37,52 @@ namespace Ambarina.DAL
             }
             finally { conexao.FecharConexao(); }
         }
+
+        // NOVO: altera a senha do usuário. Retorna true se conseguiu alterar.
+        public bool AlterarSenha(string usuario, string novaSenha)
+        {
+            try
+            {
+                conexao.AbrirConexao();
+                string sql = "UPDATE usuarios SET senha = @pass WHERE usuario = @user";
+                MySqlCommand cmd = new MySqlCommand(sql, conexao.conectar);
+                cmd.Parameters.AddWithValue("@pass", novaSenha);
+                cmd.Parameters.AddWithValue("@user", usuario);
+
+                int linhas = cmd.ExecuteNonQuery();
+                return linhas > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao alterar senha: " + ex.Message);
+            }
+            finally { conexao.FecharConexao(); }
+        }
+
+        // NOVO: obtém a senha atual do usuário para validação
+        public string ObterSenhaAtual(string usuario)
+        {
+            try
+            {
+                conexao.AbrirConexao();
+                string sql = "SELECT senha FROM usuarios WHERE usuario = @user";
+                MySqlCommand cmd = new MySqlCommand(sql, conexao.conectar);
+                cmd.Parameters.AddWithValue("@user", usuario);
+
+                MySqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    return dr["senha"].ToString();
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao obter senha atual: " + ex.Message);
+            }
+            finally { conexao.FecharConexao(); }
+        }
     }
 }

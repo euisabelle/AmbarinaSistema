@@ -8,12 +8,15 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Ambarina.UI
 {
     public partial class FrmLogin : Form
     {
+        private bool redefinicaoAtiva = false;
+
         public FrmLogin()
         {
             InitializeComponent();
@@ -23,6 +26,9 @@ namespace Ambarina.UI
             txtLoginSenha.PasswordChar = '\0'; // Caractere nulo (texto limpo)
             txtLoginSenha.ForeColor = corPlaceholder;
             picLoginNaoVerSenha.Image = Properties.Resources.fluent_eye_off_32_regular;
+
+            VerificarCapsLock();
+
         }
 
         private void lbLoginExit_Click(object sender, EventArgs e)
@@ -126,7 +132,6 @@ namespace Ambarina.UI
             }
         }
 
-
         private void VerificarCapsLock()
         {
             // Control.IsKeyLocked verifica o estado físico da tecla no Windows
@@ -198,7 +203,206 @@ namespace Ambarina.UI
 
         private void lblRedefinirSenha_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Função de redefinir senha ainda não implementada.", "Em Breve", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // Alterna entre modo login e modo redefinição
+            lblRedefinirSenha.Visible = false; // Esconde o link de "Esqueci minha senha" para evitar confusão
+            SetModoRedefinicao(!redefinicaoAtiva);
+            VerificarCapsLock();
+
+        }
+
+        private void SetModoRedefinicao(bool ativar)
+        {
+            redefinicaoAtiva = ativar;
+
+            // Mostrar/ocultar controles
+            lblInstrucoesRedefinicao.Visible = ativar;
+            txtLoginNovaSenha.Visible = ativar;
+            txtLoginConfirmaSenha.Visible = ativar;
+            btnSalvarSenha.Visible = ativar;
+            btnCancelarRedefinicao.Visible = ativar;
+
+            // Esconder controles de login que conflitam
+            txtLoginSenha.Visible = !ativar;
+            picLoginNaoVerSenha.Visible = !ativar;
+            btnLoginEntrar.Visible = !ativar;
+            panel2.Visible = !ativar;
+            panel3.Visible = !ativar;
+            lbCaps.Visible = false;
+
+            // Ajusta placeholders (reutiliza txtLoginUsuario para usuário no fluxo de redefinição)
+            if (ativar)
+            {
+                // Garante que o usuário esteja apto a digitar nome (se estava placeholder, mantém)
+                if (string.IsNullOrWhiteSpace(txtLoginUsuario.Text) || txtLoginUsuario.Text == "Usuário")
+                {
+                    txtLoginUsuario.Text = "Usuário";
+                    txtLoginUsuario.ForeColor = corPlaceholder;
+                }
+
+                // Prepara placeholders dos campos de senha
+                txtLoginNovaSenha.Text = "Nova senha";
+                txtLoginNovaSenha.ForeColor = corPlaceholder;
+                txtLoginNovaSenha.PasswordChar = '\0';
+
+                txtLoginConfirmaSenha.Text = "Confirmar senha";
+                txtLoginConfirmaSenha.ForeColor = corPlaceholder;
+                txtLoginConfirmaSenha.PasswordChar = '\0';
+            }
+            else
+            {
+                // volta ao estado normal
+                if (string.IsNullOrWhiteSpace(txtLoginSenha.Text))
+                {
+                    txtLoginSenha.Text = "Senha";
+                    txtLoginSenha.ForeColor = corPlaceholder;
+                    txtLoginSenha.PasswordChar = '\0';
+                }
+            }
+        }
+
+        private void btnCancelarRedefinicao_Click(object sender, EventArgs e)
+        {
+            SetModoRedefinicao(false);
+            lblRedefinirSenha.Visible = true; // Mostra o link de "Esqueci minha senha" novamente
+        }
+
+        private void btnSalvarSenha_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Valida campos
+                string usuario = txtLoginUsuario.Text?.Trim() ?? "";
+                string nova = txtLoginNovaSenha.Text ?? "";
+                string confirma = txtLoginConfirmaSenha.Text ?? "";
+
+                if (string.IsNullOrWhiteSpace(usuario) || usuario == "Usuário")
+                {
+                    MessageBox.Show("Informe o usuário para redefinir a senha.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Verifica placeholders
+                if (nova == "Nova senha" || confirma == "Confirmar senha")
+                {
+                    MessageBox.Show("Informe a nova senha e confirme.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (nova != confirma)
+                {
+                    MessageBox.Show("As senhas não conferem.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (!ValidarSenha(nova, out string motivo))
+                {
+                    MessageBox.Show($"Senha inválida: {motivo}", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Valida se a nova senha é diferente da senha anterior
+                UsuarioBLL bll = new UsuarioBLL();
+                if (!bll.ValidarSenhaAnterior(usuario, nova))
+                {
+                    MessageBox.Show("A nova senha não pode ser igual à senha anterior.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Persiste via BLL
+                bool ok = bll.AlterarSenha(usuario, nova);
+                if (ok)
+                {
+                    MessageBox.Show("Senha alterada com sucesso. Faça login com a nova senha.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    SetModoRedefinicao(false);
+                }
+                else
+                {
+                    MessageBox.Show("Usuário não encontrado ou erro ao salvar a senha.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Valida regras de segurança da senha
+        // Regras aplicadas:
+        // - mínimo 8 caracteres
+        // - pelo menos uma letra maiúscula
+        // - pelo menos uma letra minúscula
+        // - pelo menos um dígito
+        // - pelo menos um caractere especial
+        private bool ValidarSenha(string senha, out string motivo)
+        {
+            motivo = "";
+            if (string.IsNullOrEmpty(senha) || senha.Length < 8)
+            {
+                motivo = "mínimo de 8 caracteres.";
+                return false;
+            }
+            if (!Regex.IsMatch(senha, "[A-Z]"))
+            {
+                motivo = "precisa conter pelo menos uma letra maiúscula.";
+                return false;
+            }
+            if (!Regex.IsMatch(senha, "[a-z]"))
+            {
+                motivo = "precisa conter pelo menos uma letra minúscula.";
+                return false;
+            }
+            if (!Regex.IsMatch(senha, "[0-9]"))
+            {
+                motivo = "precisa conter pelo menos um dígito.";
+                return false;
+            }
+            if (!Regex.IsMatch(senha, "[^a-zA-Z0-9]"))
+            {
+                motivo = "precisa conter pelo menos um caractere especial (ex: !@#$%).";
+                return false;
+            }
+            return true;
+        }
+
+        // Placeholders e eventos para novos campos de senha
+        private void txtLoginNovaSenha_Enter(object sender, EventArgs e)
+        {
+            if (txtLoginNovaSenha.Text == "Nova senha")
+            {
+                txtLoginNovaSenha.Text = "";
+                txtLoginNovaSenha.ForeColor = corDigitacao;
+                txtLoginNovaSenha.PasswordChar = '•';
+            }
+        }
+
+        private void txtLoginNovaSenha_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtLoginNovaSenha.Text))
+            {
+                txtLoginNovaSenha.Text = "Nova senha";
+                txtLoginNovaSenha.ForeColor = corPlaceholder;
+                txtLoginNovaSenha.PasswordChar = '\0';
+            }
+        }
+
+        private void txtLoginConfirmaSenha_Enter(object sender, EventArgs e)
+        {
+            if (txtLoginConfirmaSenha.Text == "Confirmar senha")
+            {
+                txtLoginConfirmaSenha.Text = "";
+                txtLoginConfirmaSenha.ForeColor = corDigitacao;
+                txtLoginConfirmaSenha.PasswordChar = '•';
+            }
+        }
+
+        private void txtLoginConfirmaSenha_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtLoginConfirmaSenha.Text))
+            {
+                txtLoginConfirmaSenha.Text = "Confirmar senha";
+                txtLoginConfirmaSenha.ForeColor = corPlaceholder;
+                txtLoginConfirmaSenha.PasswordChar = '\0';
+            }
         }
 
         private void FrmLogin_Load(object sender, EventArgs e)

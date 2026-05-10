@@ -38,8 +38,14 @@ namespace Ambarina.BLL
 
         public void SalvarReceitaCompleta(ReceitaDTO receita, List<ItensReceitaDTO> itens)
         {
-            // Aqui você chamará a sua DAL para salvar a receita e depois um loop para os itens
-            //receitaDAL.SalvarNovaReceita(receita, itens);
+            if (receita.IdProduto <= 0)
+                throw new Exception("Selecione um produto base válido.");
+
+            // Esse é o gatilho da sua mensagem de erro
+            if (itens == null || itens.Count == 0)
+                throw new Exception("A receita precisa de pelo menos um insumo.");
+
+            new ReceitaDAL().SalvarNovaReceita(receita, itens);
         }
     }
 }

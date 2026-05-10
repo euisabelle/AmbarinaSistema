@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Ambarina.DTO;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -67,6 +68,36 @@ namespace Ambarina.DAL
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 return dt;
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+            finally { conexao.FecharConexao(); }
+        }
+
+        public void SalvarNovaReceita(ReceitaDTO receita, List<ItensReceitaDTO> itens)
+        {
+            try
+            {
+                conexao.AbrirConexao();
+                // 1. Salva o cabeçalho da receita e pega o ID gerado
+                string sqlReceita = "INSERT INTO receitas (id_produto, aroma_padrao) VALUES (@idProd, @aroma); SELECT LAST_INSERT_ID();";
+                MySqlCommand cmdRec = new MySqlCommand(sqlReceita, conexao.conectar);
+                cmdRec.Parameters.AddWithValue("@idProd", receita.IdProduto);
+                cmdRec.Parameters.AddWithValue("@aroma", receita.AromaPadrao);
+
+                int idReceitaGerada = Convert.ToInt32(cmdRec.ExecuteScalar());
+
+                // 2. Salva os itens vinculados a esse ID
+                foreach (var item in itens)
+                {
+                    // Precisamos buscar o id_insumo pelo nome que está na grid
+                    string sqlItens = "INSERT INTO itens_receita (id_receita, id_insumo, quantidade) " +
+                                      "VALUES (@idRec, (SELECT id_insumo FROM insumos WHERE nome = @nomeInsumo), @qtd)";
+                    MySqlCommand cmdItem = new MySqlCommand(sqlItens, conexao.conectar);
+                    cmdItem.Parameters.AddWithValue("@idRec", idReceitaGerada);
+                    cmdItem.Parameters.AddWithValue("@nomeInsumo", item.NomeInsumo);
+                    cmdItem.Parameters.AddWithValue("@qtd", item.Quantidade);
+                    cmdItem.ExecuteNonQuery();
+                }
             }
             catch (Exception ex) { throw new Exception(ex.Message); }
             finally { conexao.FecharConexao(); }

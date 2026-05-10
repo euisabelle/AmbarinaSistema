@@ -20,12 +20,6 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmLogin));
@@ -40,6 +34,11 @@
             picLoginLogo = new PictureBox();
             txtLoginSenha = new TextBox();
             txtLoginUsuario = new TextBox();
+            lblInstrucoesRedefinicao = new Label();
+            txtLoginNovaSenha = new TextBox();
+            txtLoginConfirmaSenha = new TextBox();
+            btnSalvarSenha = new Button();
+            btnCancelarRedefinicao = new Button();
             lbLoginExit = new Label();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picLoginNaoVerSenha).BeginInit();
@@ -60,6 +59,11 @@
             panel1.Controls.Add(picLoginLogo);
             panel1.Controls.Add(txtLoginSenha);
             panel1.Controls.Add(txtLoginUsuario);
+            panel1.Controls.Add(lblInstrucoesRedefinicao);
+            panel1.Controls.Add(txtLoginNovaSenha);
+            panel1.Controls.Add(txtLoginConfirmaSenha);
+            panel1.Controls.Add(btnSalvarSenha);
+            panel1.Controls.Add(btnCancelarRedefinicao);
             panel1.Location = new Point(477, 102);
             panel1.Name = "panel1";
             panel1.Size = new Size(270, 400);
@@ -79,11 +83,12 @@
             // 
             // lbCaps
             // 
+            lbCaps.BackColor = Color.Transparent;
             lbCaps.Font = new Font("Montserrat", 8.999999F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lbCaps.ForeColor = Color.FromArgb(190, 169, 137);
-            lbCaps.Location = new Point(34, 266);
+            lbCaps.Location = new Point(34, 267);
             lbCaps.Name = "lbCaps";
-            lbCaps.Size = new Size(202, 23);
+            lbCaps.Size = new Size(202, 20);
             lbCaps.TabIndex = 12;
             lbCaps.Text = "Caps Lock ligado!";
             lbCaps.TextAlign = ContentAlignment.MiddleCenter;
@@ -194,6 +199,88 @@
             txtLoginUsuario.KeyDown += txtLoginUsuario_KeyDown;
             txtLoginUsuario.Leave += txtLoginUsuario_Leave;
             // 
+            // lblInstrucoesRedefinicao
+            // 
+            lblInstrucoesRedefinicao.Font = new Font("Montserrat", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblInstrucoesRedefinicao.ForeColor = Color.FromArgb(190, 169, 137);
+            lblInstrucoesRedefinicao.Location = new Point(34, 130);
+            lblInstrucoesRedefinicao.Name = "lblInstrucoesRedefinicao";
+            lblInstrucoesRedefinicao.Size = new Size(200, 34);
+            lblInstrucoesRedefinicao.TabIndex = 20;
+            lblInstrucoesRedefinicao.Text = "Informe usuário, nova senha e confirme";
+            lblInstrucoesRedefinicao.TextAlign = ContentAlignment.MiddleCenter;
+            lblInstrucoesRedefinicao.Visible = false;
+            // 
+            // txtLoginNovaSenha
+            // 
+            txtLoginNovaSenha.Anchor = AnchorStyles.Left;
+            txtLoginNovaSenha.BackColor = Color.White;
+            txtLoginNovaSenha.BorderStyle = BorderStyle.None;
+            txtLoginNovaSenha.Font = new Font("Montserrat", 9.749999F);
+            txtLoginNovaSenha.ForeColor = Color.FromArgb(190, 169, 137);
+            txtLoginNovaSenha.Location = new Point(34, 199);
+            txtLoginNovaSenha.Margin = new Padding(5);
+            txtLoginNovaSenha.Multiline = true;
+            txtLoginNovaSenha.Name = "txtLoginNovaSenha";
+            txtLoginNovaSenha.Size = new Size(200, 25);
+            txtLoginNovaSenha.TabIndex = 21;
+            txtLoginNovaSenha.Text = "Nova senha";
+            txtLoginNovaSenha.Visible = false;
+            txtLoginNovaSenha.TextChanged += txtLoginSenha_TextChanged;
+            txtLoginNovaSenha.Enter += txtLoginNovaSenha_Enter;
+            txtLoginNovaSenha.Leave += txtLoginNovaSenha_Leave;
+            // 
+            // txtLoginConfirmaSenha
+            // 
+            txtLoginConfirmaSenha.Anchor = AnchorStyles.Left;
+            txtLoginConfirmaSenha.BackColor = Color.White;
+            txtLoginConfirmaSenha.BorderStyle = BorderStyle.None;
+            txtLoginConfirmaSenha.Font = new Font("Montserrat", 9.749999F);
+            txtLoginConfirmaSenha.ForeColor = Color.FromArgb(190, 169, 137);
+            txtLoginConfirmaSenha.Location = new Point(34, 230);
+            txtLoginConfirmaSenha.Margin = new Padding(5);
+            txtLoginConfirmaSenha.Multiline = true;
+            txtLoginConfirmaSenha.Name = "txtLoginConfirmaSenha";
+            txtLoginConfirmaSenha.Size = new Size(200, 25);
+            txtLoginConfirmaSenha.TabIndex = 22;
+            txtLoginConfirmaSenha.Text = "Confirmar senha";
+            txtLoginConfirmaSenha.Visible = false;
+            txtLoginConfirmaSenha.TextChanged += txtLoginSenha_TextChanged;
+            txtLoginConfirmaSenha.Enter += txtLoginConfirmaSenha_Enter;
+            txtLoginConfirmaSenha.Leave += txtLoginConfirmaSenha_Leave;
+            // 
+            // btnSalvarSenha
+            // 
+            btnSalvarSenha.BackColor = Color.FromArgb(190, 138, 58);
+            btnSalvarSenha.Cursor = Cursors.Hand;
+            btnSalvarSenha.FlatStyle = FlatStyle.Flat;
+            btnSalvarSenha.Font = new Font("Montserrat Medium", 8.999999F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnSalvarSenha.ForeColor = Color.White;
+            btnSalvarSenha.Location = new Point(34, 301);
+            btnSalvarSenha.Name = "btnSalvarSenha";
+            btnSalvarSenha.Size = new Size(200, 35);
+            btnSalvarSenha.TabIndex = 23;
+            btnSalvarSenha.Text = "Salvar nova senha";
+            btnSalvarSenha.UseVisualStyleBackColor = false;
+            btnSalvarSenha.Visible = false;
+            btnSalvarSenha.Click += btnSalvarSenha_Click;
+            // 
+            // btnCancelarRedefinicao
+            // 
+            btnCancelarRedefinicao.BackColor = Color.White;
+            btnCancelarRedefinicao.Cursor = Cursors.Hand;
+            btnCancelarRedefinicao.FlatStyle = FlatStyle.Flat;
+            btnCancelarRedefinicao.Font = new Font("Montserrat", 8.249999F);
+            btnCancelarRedefinicao.ForeColor = Color.FromArgb(190, 169, 137);
+            btnCancelarRedefinicao.Location = new Point(34, 341);
+            btnCancelarRedefinicao.Name = "btnCancelarRedefinicao";
+            btnCancelarRedefinicao.Size = new Size(200, 30);
+            btnCancelarRedefinicao.TabIndex = 24;
+            btnCancelarRedefinicao.Text = "Cancelar";
+            btnCancelarRedefinicao.UseVisualStyleBackColor = false;
+            btnCancelarRedefinicao.Visible = false;
+            btnCancelarRedefinicao.Click += btnCancelarRedefinicao_Click;
+            // 
             // lbLoginExit
             // 
             lbLoginExit.BackColor = Color.Transparent;
@@ -235,7 +322,7 @@
             ResumeLayout(false);
         }
 
-        #endregion
+
 
         private Panel panel1;
         private PictureBox picLoginLogo;
@@ -249,5 +336,12 @@
         private PictureBox picLoginNaoVerSenha;
         private Label lbCaps;
         private Label lblRedefinirSenha;
+
+        //CONTROLES
+        private Label lblInstrucoesRedefinicao;
+        private TextBox txtLoginNovaSenha;
+        private TextBox txtLoginConfirmaSenha;
+        private Button btnSalvarSenha;
+        private Button btnCancelarRedefinicao;
     }
 }

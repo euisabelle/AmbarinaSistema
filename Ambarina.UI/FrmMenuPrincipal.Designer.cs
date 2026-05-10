@@ -20,12 +20,6 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
@@ -3130,8 +3124,6 @@
             pnlCadastroInsumo.PerformLayout();
             ResumeLayout(false);
         }
-
-        #endregion
 
         private Label lbLoginExit;
         private Panel pnlLateral;
