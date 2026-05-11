@@ -551,10 +551,13 @@ namespace Ambarina.UI
         {
             try
             {
+                // 1. DESATIVA a criação automática de colunas
+                dgvItensReceita.AutoGenerateColumns = false;
+
                 ReceitaBLL bll = new ReceitaBLL();
+                // 2. Carrega os dados
                 dgvItensReceita.DataSource = bll.ListarItensDaReceita(idReceita);
 
-                // Ajuste das colunas
                 if (dgvItensReceita.Columns.Contains("id_insumo"))
                     dgvItensReceita.Columns["id_insumo"].Visible = false;
             }
@@ -638,42 +641,38 @@ namespace Ambarina.UI
             }
 
             // Lógica Editar
-            if (dgvListaReceitas.Columns[e.ColumnIndex].Name == "colBtnEditarReceita")
+            if (dgvListaReceitas.Columns[e.ColumnIndex].Name == "colEditarReceita")
             {
-                // Sinaliza edição
-                pnlCardReceita.BackColor = Color.FromArgb(255, 252, 240);
-
                 idReceitaSelecionada = Convert.ToInt32(dgvListaReceitas.Rows[e.RowIndex].Cells["id_receita"].Value);
-
-                // Carrega os dados da receita
                 cmbProdutoBase.Text = dgvListaReceitas.Rows[e.RowIndex].Cells["Produto"].Value.ToString();
                 txtAroma.Text = dgvListaReceitas.Rows[e.RowIndex].Cells["Aroma"].Value.ToString();
 
-                // **IMPORTANTE**: Limpa a grid ANTES de carregar os dados
+                // ESSENCIAL: Remove o vínculo e limpa a grid antes de adicionar as novas linhas
                 dgvItensReceita.DataSource = null;
                 dgvItensReceita.Rows.Clear();
 
-                // Busca os insumos reais dessa receita no banco de dados
                 ReceitaBLL bll = new ReceitaBLL();
                 DataTable dtItens = bll.ListarItensDaReceita(idReceitaSelecionada);
 
-                // Preenche a grid de montagem manualmente para permitir que você adicione ou remova itens
-                foreach (DataRow row in dtItens.Rows)
+                foreach (DataRow dr in dtItens.Rows)
                 {
-                    int n = dgvItensReceita.Rows.Add();
-                    dgvItensReceita.Rows[n].Cells["colInsumo"].Value = row["Insumo"].ToString();
-                    dgvItensReceita.Rows[n].Cells["colQtd"].Value = row["Qtd"].ToString();
-                    dgvItensReceita.Rows[n].Cells["colUnidade"].Value = row["Unid"].ToString();
+                    // Adiciona a linha e preenche usando os nomes exatos das colunas do seu Designer
+                    int rowIndex = dgvItensReceita.Rows.Add();
+                    dgvItensReceita.Rows[rowIndex].Cells["colInsumo"].Value = dr["Insumo"].ToString();
+                    dgvItensReceita.Rows[rowIndex].Cells["colQtd"].Value = dr["Qtd"].ToString();
+                    dgvItensReceita.Rows[rowIndex].Cells["colUnidade"].Value = dr["Unid"].ToString();
                 }
 
                 btnSalvarReceitaCompleta.Text = "ATUALIZAR RECEITA";
-                cmbProdutoBase.Focus();
             }
         }
 
         private void dgvItensReceita_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
+
+            // Se o valor da célula de insumo for nulo, ignora o clique para não quebrar
+            if (dgvItensReceita.Rows[e.RowIndex].Cells["colInsumo"].Value == null) return;
 
             // Excluir item
             if (dgvItensReceita.Columns[e.ColumnIndex].Name == "colExcluirItensReceita")
