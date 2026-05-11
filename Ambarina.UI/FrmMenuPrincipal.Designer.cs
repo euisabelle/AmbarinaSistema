@@ -32,38 +32,43 @@
             DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle17 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle15 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle16 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle18 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle23 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle22 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle19 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle20 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle21 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle22 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle23 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle28 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle24 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle30 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle25 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle26 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle27 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle28 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle29 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle35 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle30 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle31 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle34 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle32 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle33 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle35 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle42 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle34 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle36 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle39 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle37 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle38 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle39 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle40 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle47 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle41 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle42 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle43 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle44 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle45 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle46 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMenuPrincipal));
             lbLoginExit = new Label();
             pnlLateral = new Panel();
@@ -126,12 +131,8 @@
             cmbProdutoBase = new ComboBox();
             lblReceitas = new Label();
             dgvListaReceitas = new DataGridView();
-            id_receita = new DataGridViewTextBoxColumn();
-            Produto = new DataGridViewTextBoxColumn();
-            Aroma = new DataGridViewTextBoxColumn();
-            ColBtnEditarReceita = new DataGridViewButtonColumn();
-            ColBtnExcluirReceita = new DataGridViewButtonColumn();
             pnlViewEstoque = new Panel();
+            pnlDivisaoProntaEntrega = new Panel();
             dgvEstoque = new DataGridView();
             dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColCod = new DataGridViewTextBoxColumn();
@@ -151,6 +152,15 @@
             lblFiltroCategoria = new Label();
             lblBuscarProduto = new Label();
             pnlFormCadastroProduto = new Panel();
+            lblCatalogoDeProdutos = new Label();
+            dgvProdutos = new DataGridView();
+            colIDProduto = new DataGridViewTextBoxColumn();
+            ColNomeProduto = new DataGridViewTextBoxColumn();
+            colCategoriaProduto = new DataGridViewTextBoxColumn();
+            colMargemLucro = new DataGridViewTextBoxColumn();
+            colEstoqueMinimo = new DataGridViewTextBoxColumn();
+            colEditarProd = new DataGridViewButtonColumn();
+            colExcluirProd = new DataGridViewButtonColumn();
             btnSalvarProduto = new Button();
             txtEstoqueMin = new TextBox();
             lblEstoqueMin = new Label();
@@ -275,6 +285,11 @@
             lblCategoria = new Label();
             txtNomeInsumo = new TextBox();
             lblNomeInsumo = new Label();
+            id_receita = new DataGridViewTextBoxColumn();
+            Produto = new DataGridViewTextBoxColumn();
+            Aroma = new DataGridViewTextBoxColumn();
+            ColBtnEditarReceita = new DataGridViewButtonColumn();
+            ColBtnExcluirReceita = new DataGridViewButtonColumn();
             pnlLateral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picMenuLogo).BeginInit();
             pnlTopo.SuspendLayout();
@@ -291,6 +306,7 @@
             ((System.ComponentModel.ISupportInitialize)dgvEstoque).BeginInit();
             pnlFiltrosEstoque.SuspendLayout();
             pnlFormCadastroProduto.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvProdutos).BeginInit();
             pnlViewFinanceiro.SuspendLayout();
             pnlCardEntradas.SuspendLayout();
             pnlCardSaidas.SuspendLayout();
@@ -864,7 +880,7 @@
             dgvItensReceita.RowTemplate.Height = 35;
             dgvItensReceita.ScrollBars = ScrollBars.Vertical;
             dgvItensReceita.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvItensReceita.Size = new Size(592, 280);
+            dgvItensReceita.Size = new Size(505, 280);
             dgvItensReceita.TabIndex = 21;
             dgvItensReceita.CellContentClick += dgvItensReceita_CellContentClick;
             // 
@@ -1135,7 +1151,7 @@
             dgvListaReceitas.Dock = DockStyle.Right;
             dgvListaReceitas.EnableHeadersVisualStyles = false;
             dgvListaReceitas.GridColor = Color.FromArgb(242, 233, 216);
-            dgvListaReceitas.Location = new Point(1027, 0);
+            dgvListaReceitas.Location = new Point(940, 0);
             dgvListaReceitas.Margin = new Padding(20);
             dgvListaReceitas.Name = "dgvListaReceitas";
             dgvListaReceitas.ReadOnly = true;
@@ -1143,61 +1159,14 @@
             dgvListaReceitas.RowTemplate.Height = 35;
             dgvListaReceitas.ScrollBars = ScrollBars.Vertical;
             dgvListaReceitas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvListaReceitas.Size = new Size(263, 280);
+            dgvListaReceitas.Size = new Size(350, 280);
             dgvListaReceitas.TabIndex = 22;
             dgvListaReceitas.CellClick += dgvListaReceitas_CellClick;
             dgvListaReceitas.CellContentClick += dgvListaReceitas_CellContentClick;
             // 
-            // id_receita
-            // 
-            id_receita.HeaderText = "ID";
-            id_receita.Name = "id_receita";
-            id_receita.ReadOnly = true;
-            id_receita.Visible = false;
-            // 
-            // Produto
-            // 
-            Produto.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Produto.FillWeight = 283.040924F;
-            Produto.HeaderText = "RECEITA";
-            Produto.Name = "Produto";
-            Produto.ReadOnly = true;
-            // 
-            // Aroma
-            // 
-            Aroma.FillWeight = 150F;
-            Aroma.HeaderText = "AROMA";
-            Aroma.Name = "Aroma";
-            Aroma.ReadOnly = true;
-            // 
-            // ColBtnEditarReceita
-            // 
-            dataGridViewCellStyle10.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle10.ForeColor = Color.SandyBrown;
-            ColBtnEditarReceita.DefaultCellStyle = dataGridViewCellStyle10;
-            ColBtnEditarReceita.FlatStyle = FlatStyle.Flat;
-            ColBtnEditarReceita.HeaderText = " ";
-            ColBtnEditarReceita.Name = "ColBtnEditarReceita";
-            ColBtnEditarReceita.ReadOnly = true;
-            ColBtnEditarReceita.Text = "✎";
-            ColBtnEditarReceita.UseColumnTextForButtonValue = true;
-            ColBtnEditarReceita.Width = 40;
-            // 
-            // ColBtnExcluirReceita
-            // 
-            dataGridViewCellStyle11.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle11.ForeColor = Color.SaddleBrown;
-            ColBtnExcluirReceita.DefaultCellStyle = dataGridViewCellStyle11;
-            ColBtnExcluirReceita.FillWeight = 32.4598732F;
-            ColBtnExcluirReceita.HeaderText = "";
-            ColBtnExcluirReceita.Name = "ColBtnExcluirReceita";
-            ColBtnExcluirReceita.ReadOnly = true;
-            ColBtnExcluirReceita.Text = "X";
-            ColBtnExcluirReceita.UseColumnTextForButtonValue = true;
-            ColBtnExcluirReceita.Width = 40;
-            // 
             // pnlViewEstoque
             // 
+            pnlViewEstoque.Controls.Add(pnlDivisaoProntaEntrega);
             pnlViewEstoque.Controls.Add(dgvEstoque);
             pnlViewEstoque.Controls.Add(pnlFiltrosEstoque);
             pnlViewEstoque.Controls.Add(pnlFormCadastroProduto);
@@ -1208,6 +1177,14 @@
             pnlViewEstoque.Size = new Size(1350, 840);
             pnlViewEstoque.TabIndex = 4;
             pnlViewEstoque.Visible = false;
+            // 
+            // pnlDivisaoProntaEntrega
+            // 
+            pnlDivisaoProntaEntrega.BackColor = Color.FromArgb(242, 233, 216);
+            pnlDivisaoProntaEntrega.Location = new Point(378, 40);
+            pnlDivisaoProntaEntrega.Name = "pnlDivisaoProntaEntrega";
+            pnlDivisaoProntaEntrega.Size = new Size(2, 640);
+            pnlDivisaoProntaEntrega.TabIndex = 25;
             // 
             // dgvEstoque
             // 
@@ -1438,6 +1415,8 @@
             // pnlFormCadastroProduto
             // 
             pnlFormCadastroProduto.BackColor = Color.White;
+            pnlFormCadastroProduto.Controls.Add(lblCatalogoDeProdutos);
+            pnlFormCadastroProduto.Controls.Add(dgvProdutos);
             pnlFormCadastroProduto.Controls.Add(btnSalvarProduto);
             pnlFormCadastroProduto.Controls.Add(txtEstoqueMin);
             pnlFormCadastroProduto.Controls.Add(lblEstoqueMin);
@@ -1454,6 +1433,133 @@
             pnlFormCadastroProduto.Padding = new Padding(25);
             pnlFormCadastroProduto.Size = new Size(350, 770);
             pnlFormCadastroProduto.TabIndex = 4;
+            // 
+            // lblCatalogoDeProdutos
+            // 
+            lblCatalogoDeProdutos.AutoSize = true;
+            lblCatalogoDeProdutos.Font = new Font("Montserrat", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblCatalogoDeProdutos.ForeColor = Color.FromArgb(15, 67, 16);
+            lblCatalogoDeProdutos.Location = new Point(18, 349);
+            lblCatalogoDeProdutos.Name = "lblCatalogoDeProdutos";
+            lblCatalogoDeProdutos.Size = new Size(225, 25);
+            lblCatalogoDeProdutos.TabIndex = 24;
+            lblCatalogoDeProdutos.Text = "CATÁLOGO DE PRODUTOS";
+            // 
+            // dgvProdutos
+            // 
+            dgvProdutos.AllowUserToAddRows = false;
+            dgvProdutos.AllowUserToDeleteRows = false;
+            dgvProdutos.BackgroundColor = Color.White;
+            dgvProdutos.BorderStyle = BorderStyle.None;
+            dgvProdutos.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgvProdutos.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            dataGridViewCellStyle18.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle18.BackColor = Color.FromArgb(15, 67, 16);
+            dataGridViewCellStyle18.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle18.ForeColor = Color.White;
+            dataGridViewCellStyle18.Padding = new Padding(5, 0, 0, 0);
+            dataGridViewCellStyle18.SelectionBackColor = Color.FromArgb(15, 67, 16);
+            dataGridViewCellStyle18.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle18.WrapMode = DataGridViewTriState.True;
+            dgvProdutos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle18;
+            dgvProdutos.ColumnHeadersHeight = 40;
+            dgvProdutos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgvProdutos.Columns.AddRange(new DataGridViewColumn[] { colIDProduto, ColNomeProduto, colCategoriaProduto, colMargemLucro, colEstoqueMinimo, colEditarProd, colExcluirProd });
+            dataGridViewCellStyle22.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle22.BackColor = SystemColors.Window;
+            dataGridViewCellStyle22.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle22.ForeColor = Color.FromArgb(190, 138, 58);
+            dataGridViewCellStyle22.SelectionBackColor = Color.FromArgb(190, 138, 58);
+            dataGridViewCellStyle22.SelectionForeColor = Color.White;
+            dataGridViewCellStyle22.WrapMode = DataGridViewTriState.False;
+            dgvProdutos.DefaultCellStyle = dataGridViewCellStyle22;
+            dgvProdutos.EnableHeadersVisualStyles = false;
+            dgvProdutos.GridColor = Color.FromArgb(242, 233, 216);
+            dgvProdutos.Location = new Point(23, 385);
+            dgvProdutos.Margin = new Padding(20);
+            dgvProdutos.Name = "dgvProdutos";
+            dgvProdutos.RowHeadersVisible = false;
+            dgvProdutos.RowTemplate.Height = 35;
+            dgvProdutos.ScrollBars = ScrollBars.Vertical;
+            dgvProdutos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvProdutos.Size = new Size(304, 360);
+            dgvProdutos.TabIndex = 23;
+            dgvProdutos.CellContentClick += dgvProdutos_CellContentClick;
+            // 
+            // colIDProduto
+            // 
+            colIDProduto.DataPropertyName = "ID";
+            colIDProduto.HeaderText = "ID";
+            colIDProduto.Name = "colIDProduto";
+            colIDProduto.ReadOnly = true;
+            colIDProduto.Visible = false;
+            // 
+            // ColNomeProduto
+            // 
+            ColNomeProduto.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ColNomeProduto.DataPropertyName = "nome";
+            ColNomeProduto.HeaderText = "PRODUTO";
+            ColNomeProduto.Name = "ColNomeProduto";
+            ColNomeProduto.ReadOnly = true;
+            // 
+            // colCategoriaProduto
+            // 
+            colCategoriaProduto.DataPropertyName = "categoria";
+            colCategoriaProduto.HeaderText = "CATEGORIA";
+            colCategoriaProduto.Name = "colCategoriaProduto";
+            colCategoriaProduto.ReadOnly = true;
+            colCategoriaProduto.Visible = false;
+            colCategoriaProduto.Width = 150;
+            // 
+            // colMargemLucro
+            // 
+            colMargemLucro.DataPropertyName = "margemLucro";
+            dataGridViewCellStyle19.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle19.Format = "N2";
+            dataGridViewCellStyle19.NullValue = null;
+            dataGridViewCellStyle19.Padding = new Padding(0, 0, 10, 0);
+            colMargemLucro.DefaultCellStyle = dataGridViewCellStyle19;
+            colMargemLucro.HeaderText = "LUCRO (%)";
+            colMargemLucro.Name = "colMargemLucro";
+            colMargemLucro.Visible = false;
+            colMargemLucro.Width = 120;
+            // 
+            // colEstoqueMinimo
+            // 
+            colEstoqueMinimo.DataPropertyName = "estoqueMinimo";
+            colEstoqueMinimo.HeaderText = "ESTOQUE MÍN.";
+            colEstoqueMinimo.Name = "colEstoqueMinimo";
+            colEstoqueMinimo.ReadOnly = true;
+            colEstoqueMinimo.Visible = false;
+            colEstoqueMinimo.Width = 120;
+            // 
+            // colEditarProd
+            // 
+            dataGridViewCellStyle20.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle20.ForeColor = Color.SandyBrown;
+            colEditarProd.DefaultCellStyle = dataGridViewCellStyle20;
+            colEditarProd.FlatStyle = FlatStyle.Flat;
+            colEditarProd.HeaderText = " ";
+            colEditarProd.Name = "colEditarProd";
+            colEditarProd.Resizable = DataGridViewTriState.True;
+            colEditarProd.SortMode = DataGridViewColumnSortMode.Automatic;
+            colEditarProd.Text = "✎";
+            colEditarProd.UseColumnTextForButtonValue = true;
+            colEditarProd.Width = 40;
+            // 
+            // colExcluirProd
+            // 
+            dataGridViewCellStyle21.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle21.ForeColor = Color.SaddleBrown;
+            colExcluirProd.DefaultCellStyle = dataGridViewCellStyle21;
+            colExcluirProd.FlatStyle = FlatStyle.Flat;
+            colExcluirProd.HeaderText = " ";
+            colExcluirProd.Name = "colExcluirProd";
+            colExcluirProd.Resizable = DataGridViewTriState.True;
+            colExcluirProd.SortMode = DataGridViewColumnSortMode.Automatic;
+            colExcluirProd.Text = "X";
+            colExcluirProd.UseColumnTextForButtonValue = true;
+            colExcluirProd.Width = 40;
             // 
             // btnSalvarProduto
             // 
@@ -1620,7 +1726,7 @@
             lblValorEntradas.ForeColor = Color.FromArgb(15, 67, 16);
             lblValorEntradas.Location = new Point(15, 40);
             lblValorEntradas.Name = "lblValorEntradas";
-            lblValorEntradas.Size = new Size(115, 38);
+            lblValorEntradas.Size = new Size(108, 38);
             lblValorEntradas.TabIndex = 1;
             lblValorEntradas.Text = "R$ 0,00";
             // 
@@ -1631,7 +1737,7 @@
             lblTituloEntradas.ForeColor = Color.FromArgb(190, 138, 58);
             lblTituloEntradas.Location = new Point(15, 15);
             lblTituloEntradas.Name = "lblTituloEntradas";
-            lblTituloEntradas.Size = new Size(85, 18);
+            lblTituloEntradas.Size = new Size(77, 18);
             lblTituloEntradas.TabIndex = 0;
             lblTituloEntradas.Text = "ENTRADAS";
             // 
@@ -1666,7 +1772,7 @@
             lblValorSaidas.ForeColor = Color.FromArgb(15, 67, 16);
             lblValorSaidas.Location = new Point(15, 40);
             lblValorSaidas.Name = "lblValorSaidas";
-            lblValorSaidas.Size = new Size(115, 38);
+            lblValorSaidas.Size = new Size(108, 38);
             lblValorSaidas.TabIndex = 1;
             lblValorSaidas.Text = "R$ 0,00";
             // 
@@ -1677,7 +1783,7 @@
             lblTituloSaidas.ForeColor = Color.FromArgb(190, 138, 58);
             lblTituloSaidas.Location = new Point(15, 15);
             lblTituloSaidas.Name = "lblTituloSaidas";
-            lblTituloSaidas.Size = new Size(60, 18);
+            lblTituloSaidas.Size = new Size(54, 18);
             lblTituloSaidas.TabIndex = 0;
             lblTituloSaidas.Text = "SAÍDAS";
             // 
@@ -1703,7 +1809,7 @@
             lblFluxoDeCaixa.ForeColor = Color.FromArgb(15, 67, 16);
             lblFluxoDeCaixa.Location = new Point(-5, 1);
             lblFluxoDeCaixa.Name = "lblFluxoDeCaixa";
-            lblFluxoDeCaixa.Size = new Size(148, 25);
+            lblFluxoDeCaixa.Size = new Size(149, 25);
             lblFluxoDeCaixa.TabIndex = 3;
             lblFluxoDeCaixa.Text = "FLUXO DE CAIXA";
             // 
@@ -1747,26 +1853,26 @@
             dgvFinanceiro.BorderStyle = BorderStyle.None;
             dgvFinanceiro.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             dgvFinanceiro.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle18.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle18.BackColor = Color.FromArgb(15, 67, 16);
-            dataGridViewCellStyle18.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle18.ForeColor = Color.White;
-            dataGridViewCellStyle18.Padding = new Padding(5, 0, 0, 0);
-            dataGridViewCellStyle18.SelectionBackColor = Color.FromArgb(15, 67, 16);
-            dataGridViewCellStyle18.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle18.WrapMode = DataGridViewTriState.True;
-            dgvFinanceiro.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle18;
+            dataGridViewCellStyle23.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle23.BackColor = Color.FromArgb(15, 67, 16);
+            dataGridViewCellStyle23.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle23.ForeColor = Color.White;
+            dataGridViewCellStyle23.Padding = new Padding(5, 0, 0, 0);
+            dataGridViewCellStyle23.SelectionBackColor = Color.FromArgb(15, 67, 16);
+            dataGridViewCellStyle23.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle23.WrapMode = DataGridViewTriState.True;
+            dgvFinanceiro.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle23;
             dgvFinanceiro.ColumnHeadersHeight = 40;
             dgvFinanceiro.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvFinanceiro.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn3, ColDataFinanceiro, ColDescFinanceiro, ColCategoriaFinanceiro, ColTipo, ColValorFinanceiro, colEditar, colDeletar });
-            dataGridViewCellStyle23.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle23.BackColor = SystemColors.Window;
-            dataGridViewCellStyle23.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle23.ForeColor = Color.FromArgb(190, 138, 58);
-            dataGridViewCellStyle23.SelectionBackColor = Color.FromArgb(190, 138, 58);
-            dataGridViewCellStyle23.SelectionForeColor = Color.White;
-            dataGridViewCellStyle23.WrapMode = DataGridViewTriState.False;
-            dgvFinanceiro.DefaultCellStyle = dataGridViewCellStyle23;
+            dataGridViewCellStyle28.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle28.BackColor = SystemColors.Window;
+            dataGridViewCellStyle28.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle28.ForeColor = Color.FromArgb(190, 138, 58);
+            dataGridViewCellStyle28.SelectionBackColor = Color.FromArgb(190, 138, 58);
+            dataGridViewCellStyle28.SelectionForeColor = Color.White;
+            dataGridViewCellStyle28.WrapMode = DataGridViewTriState.False;
+            dgvFinanceiro.DefaultCellStyle = dataGridViewCellStyle28;
             dgvFinanceiro.Dock = DockStyle.Fill;
             dgvFinanceiro.EditMode = DataGridViewEditMode.EditProgrammatically;
             dgvFinanceiro.EnableHeadersVisualStyles = false;
@@ -1791,9 +1897,9 @@
             // 
             // ColDataFinanceiro
             // 
-            dataGridViewCellStyle19.Format = "d";
-            dataGridViewCellStyle19.NullValue = null;
-            ColDataFinanceiro.DefaultCellStyle = dataGridViewCellStyle19;
+            dataGridViewCellStyle24.Format = "d";
+            dataGridViewCellStyle24.NullValue = null;
+            ColDataFinanceiro.DefaultCellStyle = dataGridViewCellStyle24;
             ColDataFinanceiro.HeaderText = "DATA";
             ColDataFinanceiro.Name = "ColDataFinanceiro";
             ColDataFinanceiro.ReadOnly = true;
@@ -1827,9 +1933,9 @@
             // 
             // ColValorFinanceiro
             // 
-            dataGridViewCellStyle20.Format = "C2";
-            dataGridViewCellStyle20.NullValue = null;
-            ColValorFinanceiro.DefaultCellStyle = dataGridViewCellStyle20;
+            dataGridViewCellStyle25.Format = "C2";
+            dataGridViewCellStyle25.NullValue = null;
+            ColValorFinanceiro.DefaultCellStyle = dataGridViewCellStyle25;
             ColValorFinanceiro.HeaderText = "VALOR (R$)";
             ColValorFinanceiro.Name = "ColValorFinanceiro";
             ColValorFinanceiro.ReadOnly = true;
@@ -1837,14 +1943,14 @@
             // 
             // colEditar
             // 
-            dataGridViewCellStyle21.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle21.BackColor = Color.Transparent;
-            dataGridViewCellStyle21.Font = new Font("Montserrat", 8.249999F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle21.ForeColor = Color.SandyBrown;
-            dataGridViewCellStyle21.Padding = new Padding(2);
-            dataGridViewCellStyle21.SelectionBackColor = Color.Transparent;
-            dataGridViewCellStyle21.SelectionForeColor = Color.SaddleBrown;
-            colEditar.DefaultCellStyle = dataGridViewCellStyle21;
+            dataGridViewCellStyle26.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle26.BackColor = Color.Transparent;
+            dataGridViewCellStyle26.Font = new Font("Montserrat", 8.249999F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle26.ForeColor = Color.SandyBrown;
+            dataGridViewCellStyle26.Padding = new Padding(2);
+            dataGridViewCellStyle26.SelectionBackColor = Color.Transparent;
+            dataGridViewCellStyle26.SelectionForeColor = Color.SaddleBrown;
+            colEditar.DefaultCellStyle = dataGridViewCellStyle26;
             colEditar.FlatStyle = FlatStyle.Flat;
             colEditar.HeaderText = " ";
             colEditar.Name = "colEditar";
@@ -1855,13 +1961,13 @@
             // 
             // colDeletar
             // 
-            dataGridViewCellStyle22.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle22.BackColor = Color.Transparent;
-            dataGridViewCellStyle22.ForeColor = Color.RosyBrown;
-            dataGridViewCellStyle22.Padding = new Padding(2);
-            dataGridViewCellStyle22.SelectionBackColor = Color.Transparent;
-            dataGridViewCellStyle22.SelectionForeColor = Color.Brown;
-            colDeletar.DefaultCellStyle = dataGridViewCellStyle22;
+            dataGridViewCellStyle27.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle27.BackColor = Color.Transparent;
+            dataGridViewCellStyle27.ForeColor = Color.RosyBrown;
+            dataGridViewCellStyle27.Padding = new Padding(2);
+            dataGridViewCellStyle27.SelectionBackColor = Color.Transparent;
+            dataGridViewCellStyle27.SelectionForeColor = Color.Brown;
+            colDeletar.DefaultCellStyle = dataGridViewCellStyle27;
             colDeletar.FlatStyle = FlatStyle.Flat;
             colDeletar.HeaderText = " ";
             colDeletar.Name = "colDeletar";
@@ -1901,7 +2007,7 @@
             lblValorSaldo.ForeColor = Color.FromArgb(15, 67, 16);
             lblValorSaldo.Location = new Point(15, 40);
             lblValorSaldo.Name = "lblValorSaldo";
-            lblValorSaldo.Size = new Size(115, 38);
+            lblValorSaldo.Size = new Size(108, 38);
             lblValorSaldo.TabIndex = 1;
             lblValorSaldo.Text = "R$ 0,00";
             // 
@@ -1912,7 +2018,7 @@
             lblTituloSaldo.ForeColor = Color.FromArgb(190, 138, 58);
             lblTituloSaldo.Location = new Point(15, 15);
             lblTituloSaldo.Name = "lblTituloSaldo";
-            lblTituloSaldo.Size = new Size(106, 18);
+            lblTituloSaldo.Size = new Size(95, 18);
             lblTituloSaldo.TabIndex = 0;
             lblTituloSaldo.Text = "SALDO ATUAL";
             // 
@@ -1947,26 +2053,26 @@
             dgvCarrinho.BorderStyle = BorderStyle.None;
             dgvCarrinho.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             dgvCarrinho.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle24.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle24.BackColor = Color.FromArgb(15, 67, 16);
-            dataGridViewCellStyle24.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle24.ForeColor = Color.White;
-            dataGridViewCellStyle24.Padding = new Padding(5, 0, 0, 0);
-            dataGridViewCellStyle24.SelectionBackColor = Color.FromArgb(15, 67, 16);
-            dataGridViewCellStyle24.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle24.WrapMode = DataGridViewTriState.True;
-            dgvCarrinho.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle24;
+            dataGridViewCellStyle29.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle29.BackColor = Color.FromArgb(15, 67, 16);
+            dataGridViewCellStyle29.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle29.ForeColor = Color.White;
+            dataGridViewCellStyle29.Padding = new Padding(5, 0, 0, 0);
+            dataGridViewCellStyle29.SelectionBackColor = Color.FromArgb(15, 67, 16);
+            dataGridViewCellStyle29.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle29.WrapMode = DataGridViewTriState.True;
+            dgvCarrinho.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle29;
             dgvCarrinho.ColumnHeadersHeight = 40;
             dgvCarrinho.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvCarrinho.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn4, dataGridViewTextBoxColQtde, dataGridViewTextBoxColPrecoUnit, ColVendaSubtotal, ColEditarItens, ColExcluirItens });
-            dataGridViewCellStyle30.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle30.BackColor = SystemColors.Window;
-            dataGridViewCellStyle30.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle30.ForeColor = Color.FromArgb(190, 138, 58);
-            dataGridViewCellStyle30.SelectionBackColor = Color.FromArgb(190, 138, 58);
-            dataGridViewCellStyle30.SelectionForeColor = Color.White;
-            dataGridViewCellStyle30.WrapMode = DataGridViewTriState.False;
-            dgvCarrinho.DefaultCellStyle = dataGridViewCellStyle30;
+            dataGridViewCellStyle35.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle35.BackColor = SystemColors.Window;
+            dataGridViewCellStyle35.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle35.ForeColor = Color.FromArgb(190, 138, 58);
+            dataGridViewCellStyle35.SelectionBackColor = Color.FromArgb(190, 138, 58);
+            dataGridViewCellStyle35.SelectionForeColor = Color.White;
+            dataGridViewCellStyle35.WrapMode = DataGridViewTriState.False;
+            dgvCarrinho.DefaultCellStyle = dataGridViewCellStyle35;
             dgvCarrinho.Dock = DockStyle.Fill;
             dgvCarrinho.EnableHeadersVisualStyles = false;
             dgvCarrinho.GridColor = Color.FromArgb(242, 233, 216);
@@ -1997,18 +2103,18 @@
             // 
             // dataGridViewTextBoxColQtde
             // 
-            dataGridViewCellStyle25.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle25.Padding = new Padding(0, 0, 10, 0);
-            dataGridViewTextBoxColQtde.DefaultCellStyle = dataGridViewCellStyle25;
+            dataGridViewCellStyle30.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle30.Padding = new Padding(0, 0, 10, 0);
+            dataGridViewTextBoxColQtde.DefaultCellStyle = dataGridViewCellStyle30;
             dataGridViewTextBoxColQtde.HeaderText = "QTDE.";
             dataGridViewTextBoxColQtde.Name = "dataGridViewTextBoxColQtde";
             dataGridViewTextBoxColQtde.ReadOnly = true;
             // 
             // dataGridViewTextBoxColPrecoUnit
             // 
-            dataGridViewCellStyle26.Format = "C2";
-            dataGridViewCellStyle26.NullValue = null;
-            dataGridViewTextBoxColPrecoUnit.DefaultCellStyle = dataGridViewCellStyle26;
+            dataGridViewCellStyle31.Format = "C2";
+            dataGridViewCellStyle31.NullValue = null;
+            dataGridViewTextBoxColPrecoUnit.DefaultCellStyle = dataGridViewCellStyle31;
             dataGridViewTextBoxColPrecoUnit.HeaderText = "PREÇO UNITÁRIO";
             dataGridViewTextBoxColPrecoUnit.Name = "dataGridViewTextBoxColPrecoUnit";
             dataGridViewTextBoxColPrecoUnit.ReadOnly = true;
@@ -2017,18 +2123,18 @@
             // 
             // ColVendaSubtotal
             // 
-            dataGridViewCellStyle27.Format = "C2";
-            dataGridViewCellStyle27.NullValue = null;
-            ColVendaSubtotal.DefaultCellStyle = dataGridViewCellStyle27;
+            dataGridViewCellStyle32.Format = "C2";
+            dataGridViewCellStyle32.NullValue = null;
+            ColVendaSubtotal.DefaultCellStyle = dataGridViewCellStyle32;
             ColVendaSubtotal.HeaderText = "SUB-TOTAL";
             ColVendaSubtotal.Name = "ColVendaSubtotal";
             ColVendaSubtotal.ReadOnly = true;
             // 
             // ColEditarItens
             // 
-            dataGridViewCellStyle28.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle28.ForeColor = Color.SandyBrown;
-            ColEditarItens.DefaultCellStyle = dataGridViewCellStyle28;
+            dataGridViewCellStyle33.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle33.ForeColor = Color.SandyBrown;
+            ColEditarItens.DefaultCellStyle = dataGridViewCellStyle33;
             ColEditarItens.FlatStyle = FlatStyle.Flat;
             ColEditarItens.HeaderText = " ";
             ColEditarItens.Name = "ColEditarItens";
@@ -2038,9 +2144,9 @@
             // 
             // ColExcluirItens
             // 
-            dataGridViewCellStyle29.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle29.ForeColor = Color.SaddleBrown;
-            ColExcluirItens.DefaultCellStyle = dataGridViewCellStyle29;
+            dataGridViewCellStyle34.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle34.ForeColor = Color.SaddleBrown;
+            ColExcluirItens.DefaultCellStyle = dataGridViewCellStyle34;
             ColExcluirItens.FlatStyle = FlatStyle.Flat;
             ColExcluirItens.HeaderText = " ";
             ColExcluirItens.Name = "ColExcluirItens";
@@ -2481,24 +2587,24 @@
             dgvVendas.BackgroundColor = Color.White;
             dgvVendas.BorderStyle = BorderStyle.None;
             dgvVendas.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle31.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle31.BackColor = Color.FromArgb(15, 67, 16);
-            dataGridViewCellStyle31.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle31.ForeColor = Color.White;
-            dataGridViewCellStyle31.SelectionBackColor = Color.FromArgb(15, 67, 16);
-            dataGridViewCellStyle31.SelectionForeColor = Color.White;
-            dataGridViewCellStyle31.WrapMode = DataGridViewTriState.True;
-            dgvVendas.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle31;
+            dataGridViewCellStyle36.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle36.BackColor = Color.FromArgb(15, 67, 16);
+            dataGridViewCellStyle36.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle36.ForeColor = Color.White;
+            dataGridViewCellStyle36.SelectionBackColor = Color.FromArgb(15, 67, 16);
+            dataGridViewCellStyle36.SelectionForeColor = Color.White;
+            dataGridViewCellStyle36.WrapMode = DataGridViewTriState.True;
+            dgvVendas.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle36;
             dgvVendas.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvVendas.Columns.AddRange(new DataGridViewColumn[] { colData, colCliente, colProduto, colValor });
-            dataGridViewCellStyle34.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle34.BackColor = SystemColors.Window;
-            dataGridViewCellStyle34.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle34.ForeColor = Color.FromArgb(190, 138, 58);
-            dataGridViewCellStyle34.SelectionBackColor = Color.FromArgb(190, 138, 58);
-            dataGridViewCellStyle34.SelectionForeColor = Color.White;
-            dataGridViewCellStyle34.WrapMode = DataGridViewTriState.False;
-            dgvVendas.DefaultCellStyle = dataGridViewCellStyle34;
+            dataGridViewCellStyle39.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle39.BackColor = SystemColors.Window;
+            dataGridViewCellStyle39.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle39.ForeColor = Color.FromArgb(190, 138, 58);
+            dataGridViewCellStyle39.SelectionBackColor = Color.FromArgb(190, 138, 58);
+            dataGridViewCellStyle39.SelectionForeColor = Color.White;
+            dataGridViewCellStyle39.WrapMode = DataGridViewTriState.False;
+            dgvVendas.DefaultCellStyle = dataGridViewCellStyle39;
             dgvVendas.Dock = DockStyle.Fill;
             dgvVendas.EditMode = DataGridViewEditMode.EditProgrammatically;
             dgvVendas.EnableHeadersVisualStyles = false;
@@ -2513,9 +2619,9 @@
             // 
             // colData
             // 
-            dataGridViewCellStyle32.Format = "d";
-            dataGridViewCellStyle32.NullValue = null;
-            colData.DefaultCellStyle = dataGridViewCellStyle32;
+            dataGridViewCellStyle37.Format = "d";
+            dataGridViewCellStyle37.NullValue = null;
+            colData.DefaultCellStyle = dataGridViewCellStyle37;
             colData.HeaderText = "DATA";
             colData.Name = "colData";
             colData.ReadOnly = true;
@@ -2536,9 +2642,9 @@
             // 
             // colValor
             // 
-            dataGridViewCellStyle33.Format = "C2";
-            dataGridViewCellStyle33.NullValue = null;
-            colValor.DefaultCellStyle = dataGridViewCellStyle33;
+            dataGridViewCellStyle38.Format = "C2";
+            dataGridViewCellStyle38.NullValue = null;
+            colValor.DefaultCellStyle = dataGridViewCellStyle38;
             colValor.HeaderText = "VALOR (R$)";
             colValor.Name = "colValor";
             colValor.ReadOnly = true;
@@ -2591,7 +2697,7 @@
             lblValFaturamento.ForeColor = Color.FromArgb(15, 67, 16);
             lblValFaturamento.Location = new Point(15, 40);
             lblValFaturamento.Name = "lblValFaturamento";
-            lblValFaturamento.Size = new Size(115, 38);
+            lblValFaturamento.Size = new Size(108, 38);
             lblValFaturamento.TabIndex = 1;
             lblValFaturamento.Text = "R$ 0,00";
             lblValFaturamento.MouseEnter += pnlCardInsumos_MouseEnter;
@@ -2604,7 +2710,7 @@
             lblCapFaturamento.ForeColor = Color.FromArgb(190, 138, 58);
             lblCapFaturamento.Location = new Point(15, 15);
             lblCapFaturamento.Name = "lblCapFaturamento";
-            lblCapFaturamento.Size = new Size(178, 18);
+            lblCapFaturamento.Size = new Size(160, 18);
             lblCapFaturamento.TabIndex = 0;
             lblCapFaturamento.Text = "FATURAMENTO MENSAL";
             lblCapFaturamento.MouseEnter += pnlCardInsumos_MouseEnter;
@@ -2645,7 +2751,7 @@
             lblValInsumos.ForeColor = Color.FromArgb(15, 67, 16);
             lblValInsumos.Location = new Point(15, 40);
             lblValInsumos.Name = "lblValInsumos";
-            lblValInsumos.Size = new Size(117, 38);
+            lblValInsumos.Size = new Size(110, 38);
             lblValInsumos.TabIndex = 1;
             lblValInsumos.Text = "0 ITENS";
             lblValInsumos.MouseEnter += pnlCardInsumos_MouseEnter;
@@ -2658,7 +2764,7 @@
             lblCapInsumos.ForeColor = Color.FromArgb(190, 138, 58);
             lblCapInsumos.Location = new Point(15, 15);
             lblCapInsumos.Name = "lblCapInsumos";
-            lblCapInsumos.Size = new Size(156, 18);
+            lblCapInsumos.Size = new Size(139, 18);
             lblCapInsumos.TabIndex = 0;
             lblCapInsumos.Text = "ALERTAS DE INSUMO";
             lblCapInsumos.MouseEnter += pnlCardInsumos_MouseEnter;
@@ -2699,7 +2805,7 @@
             lblValEstoque.ForeColor = Color.FromArgb(15, 67, 16);
             lblValEstoque.Location = new Point(15, 40);
             lblValEstoque.Name = "lblValEstoque";
-            lblValEstoque.Size = new Size(191, 38);
+            lblValEstoque.Size = new Size(181, 38);
             lblValEstoque.TabIndex = 1;
             lblValEstoque.Text = "0 PRODUTOS";
             lblValEstoque.MouseEnter += pnlCardInsumos_MouseEnter;
@@ -2712,7 +2818,7 @@
             lblCapEstoque.ForeColor = Color.FromArgb(190, 138, 58);
             lblCapEstoque.Location = new Point(15, 15);
             lblCapEstoque.Name = "lblCapEstoque";
-            lblCapEstoque.Size = new Size(139, 18);
+            lblCapEstoque.Size = new Size(125, 18);
             lblCapEstoque.TabIndex = 0;
             lblCapEstoque.Text = "PRONTA ENTREGA";
             lblCapEstoque.MouseEnter += pnlCardInsumos_MouseEnter;
@@ -2739,26 +2845,26 @@
             dgvAlmoxarifado.BorderStyle = BorderStyle.None;
             dgvAlmoxarifado.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             dgvAlmoxarifado.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle35.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle35.BackColor = Color.FromArgb(15, 67, 16);
-            dataGridViewCellStyle35.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle35.ForeColor = Color.White;
-            dataGridViewCellStyle35.Padding = new Padding(5, 0, 0, 0);
-            dataGridViewCellStyle35.SelectionBackColor = Color.FromArgb(15, 67, 16);
-            dataGridViewCellStyle35.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle35.WrapMode = DataGridViewTriState.True;
-            dgvAlmoxarifado.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle35;
+            dataGridViewCellStyle40.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle40.BackColor = Color.FromArgb(15, 67, 16);
+            dataGridViewCellStyle40.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle40.ForeColor = Color.White;
+            dataGridViewCellStyle40.Padding = new Padding(5, 0, 0, 0);
+            dataGridViewCellStyle40.SelectionBackColor = Color.FromArgb(15, 67, 16);
+            dataGridViewCellStyle40.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle40.WrapMode = DataGridViewTriState.True;
+            dgvAlmoxarifado.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle40;
             dgvAlmoxarifado.ColumnHeadersHeight = 40;
             dgvAlmoxarifado.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvAlmoxarifado.Columns.AddRange(new DataGridViewColumn[] { colID, colNome, colCategoria, colQtdeAtual, colUnDeMedida, colMinimo, colCustoUnit, colCustoTotalInsumo, colEditarAlmox, colExcluirAlmox });
-            dataGridViewCellStyle42.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle42.BackColor = SystemColors.Window;
-            dataGridViewCellStyle42.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle42.ForeColor = Color.FromArgb(190, 138, 58);
-            dataGridViewCellStyle42.SelectionBackColor = Color.FromArgb(190, 138, 58);
-            dataGridViewCellStyle42.SelectionForeColor = Color.White;
-            dataGridViewCellStyle42.WrapMode = DataGridViewTriState.False;
-            dgvAlmoxarifado.DefaultCellStyle = dataGridViewCellStyle42;
+            dataGridViewCellStyle47.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle47.BackColor = SystemColors.Window;
+            dataGridViewCellStyle47.Font = new Font("Montserrat", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle47.ForeColor = Color.FromArgb(190, 138, 58);
+            dataGridViewCellStyle47.SelectionBackColor = Color.FromArgb(190, 138, 58);
+            dataGridViewCellStyle47.SelectionForeColor = Color.White;
+            dataGridViewCellStyle47.WrapMode = DataGridViewTriState.False;
+            dgvAlmoxarifado.DefaultCellStyle = dataGridViewCellStyle47;
             dgvAlmoxarifado.Dock = DockStyle.Fill;
             dgvAlmoxarifado.EnableHeadersVisualStyles = false;
             dgvAlmoxarifado.GridColor = Color.FromArgb(242, 233, 216);
@@ -2800,11 +2906,11 @@
             // colQtdeAtual
             // 
             colQtdeAtual.DataPropertyName = "Estoque";
-            dataGridViewCellStyle36.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle36.Format = "N2";
-            dataGridViewCellStyle36.NullValue = null;
-            dataGridViewCellStyle36.Padding = new Padding(0, 0, 10, 0);
-            colQtdeAtual.DefaultCellStyle = dataGridViewCellStyle36;
+            dataGridViewCellStyle41.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle41.Format = "N2";
+            dataGridViewCellStyle41.NullValue = null;
+            dataGridViewCellStyle41.Padding = new Padding(0, 0, 10, 0);
+            colQtdeAtual.DefaultCellStyle = dataGridViewCellStyle41;
             colQtdeAtual.HeaderText = "QTDE. ATUAL";
             colQtdeAtual.Name = "colQtdeAtual";
             colQtdeAtual.Width = 160;
@@ -2820,9 +2926,9 @@
             // colMinimo
             // 
             colMinimo.DataPropertyName = "Mínimo";
-            dataGridViewCellStyle37.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle37.Padding = new Padding(0, 0, 10, 0);
-            colMinimo.DefaultCellStyle = dataGridViewCellStyle37;
+            dataGridViewCellStyle42.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle42.Padding = new Padding(0, 0, 10, 0);
+            colMinimo.DefaultCellStyle = dataGridViewCellStyle42;
             colMinimo.HeaderText = "ESTOQUE MÍNIMO";
             colMinimo.Name = "colMinimo";
             colMinimo.ReadOnly = true;
@@ -2831,27 +2937,27 @@
             // colCustoUnit
             // 
             colCustoUnit.DataPropertyName = "Custo (R$)";
-            dataGridViewCellStyle38.Format = "C4";
-            dataGridViewCellStyle38.NullValue = null;
-            colCustoUnit.DefaultCellStyle = dataGridViewCellStyle38;
+            dataGridViewCellStyle43.Format = "C4";
+            dataGridViewCellStyle43.NullValue = null;
+            colCustoUnit.DefaultCellStyle = dataGridViewCellStyle43;
             colCustoUnit.HeaderText = "CUSTO UNIT. (R$)";
             colCustoUnit.Name = "colCustoUnit";
             // 
             // colCustoTotalInsumo
             // 
             colCustoTotalInsumo.DataPropertyName = "Total";
-            dataGridViewCellStyle39.Format = "C2";
-            dataGridViewCellStyle39.NullValue = null;
-            colCustoTotalInsumo.DefaultCellStyle = dataGridViewCellStyle39;
+            dataGridViewCellStyle44.Format = "C2";
+            dataGridViewCellStyle44.NullValue = null;
+            colCustoTotalInsumo.DefaultCellStyle = dataGridViewCellStyle44;
             colCustoTotalInsumo.HeaderText = "TOTAL (R$)";
             colCustoTotalInsumo.Name = "colCustoTotalInsumo";
             colCustoTotalInsumo.ReadOnly = true;
             // 
             // colEditarAlmox
             // 
-            dataGridViewCellStyle40.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle40.ForeColor = Color.SandyBrown;
-            colEditarAlmox.DefaultCellStyle = dataGridViewCellStyle40;
+            dataGridViewCellStyle45.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle45.ForeColor = Color.SandyBrown;
+            colEditarAlmox.DefaultCellStyle = dataGridViewCellStyle45;
             colEditarAlmox.FlatStyle = FlatStyle.Flat;
             colEditarAlmox.HeaderText = " ";
             colEditarAlmox.Name = "colEditarAlmox";
@@ -2863,9 +2969,9 @@
             // 
             // colExcluirAlmox
             // 
-            dataGridViewCellStyle41.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle41.ForeColor = Color.SaddleBrown;
-            colExcluirAlmox.DefaultCellStyle = dataGridViewCellStyle41;
+            dataGridViewCellStyle46.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle46.ForeColor = Color.SaddleBrown;
+            colExcluirAlmox.DefaultCellStyle = dataGridViewCellStyle46;
             colExcluirAlmox.FlatStyle = FlatStyle.Flat;
             colExcluirAlmox.HeaderText = " ";
             colExcluirAlmox.Name = "colExcluirAlmox";
@@ -3051,6 +3157,59 @@
             lblNomeInsumo.TabIndex = 0;
             lblNomeInsumo.Text = "NOME DO INSUMO";
             // 
+            // id_receita
+            // 
+            id_receita.DataPropertyName = "id_receita";
+            id_receita.HeaderText = "ID";
+            id_receita.Name = "id_receita";
+            id_receita.ReadOnly = true;
+            id_receita.Visible = false;
+            // 
+            // Produto
+            // 
+            Produto.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Produto.DataPropertyName = "Produto";
+            Produto.FillWeight = 283.040924F;
+            Produto.HeaderText = "RECEITA";
+            Produto.Name = "Produto";
+            Produto.ReadOnly = true;
+            // 
+            // Aroma
+            // 
+            Aroma.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Aroma.DataPropertyName = "Aroma";
+            Aroma.FillWeight = 150F;
+            Aroma.HeaderText = "AROMA";
+            Aroma.Name = "Aroma";
+            Aroma.ReadOnly = true;
+            // 
+            // ColBtnEditarReceita
+            // 
+            dataGridViewCellStyle10.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle10.ForeColor = Color.SandyBrown;
+            ColBtnEditarReceita.DefaultCellStyle = dataGridViewCellStyle10;
+            ColBtnEditarReceita.FlatStyle = FlatStyle.Flat;
+            ColBtnEditarReceita.HeaderText = " ";
+            ColBtnEditarReceita.Name = "ColBtnEditarReceita";
+            ColBtnEditarReceita.ReadOnly = true;
+            ColBtnEditarReceita.Text = "✎";
+            ColBtnEditarReceita.UseColumnTextForButtonValue = true;
+            ColBtnEditarReceita.Width = 40;
+            // 
+            // ColBtnExcluirReceita
+            // 
+            dataGridViewCellStyle11.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle11.ForeColor = Color.SaddleBrown;
+            ColBtnExcluirReceita.DefaultCellStyle = dataGridViewCellStyle11;
+            ColBtnExcluirReceita.FillWeight = 32.4598732F;
+            ColBtnExcluirReceita.FlatStyle = FlatStyle.Flat;
+            ColBtnExcluirReceita.HeaderText = "";
+            ColBtnExcluirReceita.Name = "ColBtnExcluirReceita";
+            ColBtnExcluirReceita.ReadOnly = true;
+            ColBtnExcluirReceita.Text = "X";
+            ColBtnExcluirReceita.UseColumnTextForButtonValue = true;
+            ColBtnExcluirReceita.Width = 40;
+            // 
             // FrmMenuPrincipal
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -3089,6 +3248,7 @@
             pnlFiltrosEstoque.PerformLayout();
             pnlFormCadastroProduto.ResumeLayout(false);
             pnlFormCadastroProduto.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvProdutos).EndInit();
             pnlViewFinanceiro.ResumeLayout(false);
             pnlCardEntradas.ResumeLayout(false);
             pnlCardEntradas.PerformLayout();
@@ -3330,6 +3490,16 @@
         private DataGridViewTextBoxColumn colUnidade;
         private DataGridViewButtonColumn ColBtnEditarItensReceita;
         private DataGridViewButtonColumn colBtnExcluirItensReceita;
+        private DataGridView dgvProdutos;
+        private Panel pnlDivisaoProntaEntrega;
+        private Label lblCatalogoDeProdutos;
+        private DataGridViewTextBoxColumn colIDProduto;
+        private DataGridViewTextBoxColumn ColNomeProduto;
+        private DataGridViewTextBoxColumn colCategoriaProduto;
+        private DataGridViewTextBoxColumn colMargemLucro;
+        private DataGridViewTextBoxColumn colEstoqueMinimo;
+        private DataGridViewButtonColumn colEditarProd;
+        private DataGridViewButtonColumn colExcluirProd;
         private DataGridViewTextBoxColumn id_receita;
         private DataGridViewTextBoxColumn Produto;
         private DataGridViewTextBoxColumn Aroma;

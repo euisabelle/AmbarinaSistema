@@ -161,6 +161,9 @@ namespace Ambarina.UI
 
                 if (userEncontrado != null)
                 {
+                    // Armazena o usuário na variável estática do Program
+                    Program.UsuarioLogado = userEncontrado;
+
                     MessageBox.Show($"Bem-vinda, {userEncontrado.Nome}!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     // Aqui abre o Menu Principal

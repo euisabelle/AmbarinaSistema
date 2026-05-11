@@ -47,5 +47,23 @@ namespace Ambarina.BLL
 
             produtoDAL.Salvar(produto);
         }
+
+        public List<ProdutoDTO> ListarProdutos()
+        {
+            // Deve retornar uma lista com todos os produtos cadastrados
+            return produtoDAL.ListarProdutos();
+        }
+
+        public void EditarProduto(ProdutoDTO produto)
+        {
+            // Deve atualizar o produto no banco
+            produtoDAL.EditarProduto(produto);
+        }
+
+        public void ExcluirProduto(int id)
+        {
+            // Deve deletar o produto do banco
+            produtoDAL.ExcluirProduto(id);
+        }
     }
 }

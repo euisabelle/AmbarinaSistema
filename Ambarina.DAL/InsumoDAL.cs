@@ -142,5 +142,21 @@ namespace Ambarina.DAL
             }
             finally { conexao.FecharConexao(); }
         }
+
+        public string ObterUnidadeMedida(int idInsumo)
+        {
+            try
+            {
+                conexao.AbrirConexao();
+                string sql = "SELECT unidade_medida FROM insumos WHERE id_insumo = @id";
+                MySqlCommand cmd = new MySqlCommand(sql, conexao.conectar);
+                cmd.Parameters.AddWithValue("@id", idInsumo);
+
+                object result = cmd.ExecuteScalar();
+                return result != null ? result.ToString() : "";
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+            finally { conexao.FecharConexao(); }
+        }
     }
 }

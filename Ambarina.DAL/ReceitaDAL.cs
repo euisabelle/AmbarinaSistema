@@ -32,6 +32,23 @@ namespace Ambarina.DAL
             catch (Exception ex) { throw new Exception(ex.Message); }
             finally { conexao.FecharConexao(); }
         }
+
+        public DataTable ListarAromas()
+        {
+            try
+            {
+                conexao.AbrirConexao();
+                // Lista todos os aromas cadastrados (valores únicos)
+                string sql = "SELECT DISTINCT aroma_padrao FROM receitas ORDER BY aroma_padrao ASC";
+                MySqlDataAdapter da = new MySqlDataAdapter(sql, conexao.conectar);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+            finally { conexao.FecharConexao(); }
+        }
+
         public void Excluir(int idReceita)
         {
             try
@@ -58,10 +75,11 @@ namespace Ambarina.DAL
             try
             {
                 conexao.AbrirConexao();
-                string sql = "SELECT i.nome as Insumo, ir.quantidade as Qtd, i.unidade_medida as Unid " +
-                             "FROM itens_receita ir " +
-                             "INNER JOIN insumos i ON ir.id_insumo = i.id_insumo " +
-                             "WHERE ir.id_receita = @id";
+                // Ajustado para os nomes exatos do seu novo diagrama: receita_insumos
+                string sql = "SELECT i.nome as Insumo, ri.quantidade as Qtd, i.unidade_medida as Unid " +
+                             "FROM receita_insumos ri " +
+                             "INNER JOIN insumos i ON ri.insumos_id_insumo = i.id_insumo " +
+                             "WHERE ri.receitas_id_receita = @id";
 
                 MySqlDataAdapter da = new MySqlDataAdapter(sql, conexao.conectar);
                 da.SelectCommand.Parameters.AddWithValue("@id", idReceita);
@@ -69,7 +87,7 @@ namespace Ambarina.DAL
                 da.Fill(dt);
                 return dt;
             }
-            catch (Exception ex) { throw new Exception(ex.Message); }
+            catch (Exception ex) { throw new Exception("Erro ao carregar insumos: " + ex.Message); }
             finally { conexao.FecharConexao(); }
         }
 
@@ -78,7 +96,8 @@ namespace Ambarina.DAL
             try
             {
                 conexao.AbrirConexao();
-                // 1. Salva o cabeçalho da receita e pega o ID gerado
+
+                // 1. Salva o cabeçalho (sem tentar salvar insumo aqui!)
                 string sqlReceita = "INSERT INTO receitas (id_produto, aroma_padrao) VALUES (@idProd, @aroma); SELECT LAST_INSERT_ID();";
                 MySqlCommand cmdRec = new MySqlCommand(sqlReceita, conexao.conectar);
                 cmdRec.Parameters.AddWithValue("@idProd", receita.IdProduto);
@@ -86,15 +105,71 @@ namespace Ambarina.DAL
 
                 int idReceitaGerada = Convert.ToInt32(cmdRec.ExecuteScalar());
 
-                // 2. Salva os itens vinculados a esse ID
+                //Salva os itens na tabela intermediária 
                 foreach (var item in itens)
                 {
-                    // Precisamos buscar o id_insumo pelo nome que está na grid
-                    string sqlItens = "INSERT INTO itens_receita (id_receita, id_insumo, quantidade) " +
-                                      "VALUES (@idRec, (SELECT id_insumo FROM insumos WHERE nome = @nomeInsumo), @qtd)";
+                    // Buscamos o ID do insumo pelo nome com TRIM para evitar erros de espaço
+                    string sqlBuscaInsumo = "SELECT id_insumo FROM insumos WHERE TRIM(nome) = TRIM(@nomeInsumo) LIMIT 1";
+                    MySqlCommand cmdBusca = new MySqlCommand(sqlBuscaInsumo, conexao.conectar);
+                    cmdBusca.Parameters.AddWithValue("@nomeInsumo", item.NomeInsumo);
+
+                    int idInsumo = Convert.ToInt32(cmdBusca.ExecuteScalar());
+
+                    //Inserir na tabela 'receita_insumos' com os nomes definidos no diagrama
+                    string sqlItens = "INSERT INTO receita_insumos (receitas_id_receita, insumos_id_insumo, quantidade) " +
+                                      "VALUES (@idRec, @idInsumo, @qtd)";
                     MySqlCommand cmdItem = new MySqlCommand(sqlItens, conexao.conectar);
                     cmdItem.Parameters.AddWithValue("@idRec", idReceitaGerada);
-                    cmdItem.Parameters.AddWithValue("@nomeInsumo", item.NomeInsumo);
+                    cmdItem.Parameters.AddWithValue("@idInsumo", idInsumo);
+                    cmdItem.Parameters.AddWithValue("@qtd", item.Quantidade);
+                    cmdItem.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+            finally { conexao.FecharConexao(); }
+        }
+
+        public void EditarReceita(ReceitaDTO receita, List<ItensReceitaDTO> itens)
+        {
+            try
+            {
+                conexao.AbrirConexao();
+
+                // 1. Atualiza o cabeçalho da receita
+                string sqlReceita = "UPDATE receitas SET id_produto = @idProd, aroma_padrao = @aroma WHERE id_receita = @id";
+                MySqlCommand cmdRec = new MySqlCommand(sqlReceita, conexao.conectar);
+                cmdRec.Parameters.AddWithValue("@idProd", receita.IdProduto);
+                cmdRec.Parameters.AddWithValue("@aroma", receita.AromaPadrao);
+                cmdRec.Parameters.AddWithValue("@id", receita.Id);
+                cmdRec.ExecuteNonQuery();
+
+                // 2. Deleta os itens antigos
+                string sqlDeleteItens = "DELETE FROM itens_receita WHERE id_receita = @id";
+                MySqlCommand cmdDel = new MySqlCommand(sqlDeleteItens, conexao.conectar);
+                cmdDel.Parameters.AddWithValue("@id", receita.Id);
+                cmdDel.ExecuteNonQuery();
+
+                // 3. Insere os novos itens
+                foreach (var item in itens)
+                {
+                    // Primeiro busca o ID do insumo pelo nome
+                    string sqlBuscaInsumo = "SELECT id_insumo FROM insumos WHERE nome = @nomeInsumo LIMIT 1";
+                    MySqlCommand cmdBusca = new MySqlCommand(sqlBuscaInsumo, conexao.conectar);
+                    cmdBusca.Parameters.AddWithValue("@nomeInsumo", item.NomeInsumo);
+                    
+                    object idInsumoObj = cmdBusca.ExecuteScalar();
+                    if (idInsumoObj == null)
+                    {
+                        throw new Exception($"Insumo '{item.NomeInsumo}' não encontrado no banco de dados!");
+                    }
+
+                    int idInsumo = Convert.ToInt32(idInsumoObj);
+
+                    string sqlItens = "INSERT INTO itens_receita (id_receita, id_insumo, quantidade) " +
+                                      "VALUES (@idRec, @idInsumo, @qtd)";
+                    MySqlCommand cmdItem = new MySqlCommand(sqlItens, conexao.conectar);
+                    cmdItem.Parameters.AddWithValue("@idRec", receita.Id);
+                    cmdItem.Parameters.AddWithValue("@idInsumo", idInsumo);
                     cmdItem.Parameters.AddWithValue("@qtd", item.Quantidade);
                     cmdItem.ExecuteNonQuery();
                 }

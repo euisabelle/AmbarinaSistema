@@ -50,5 +50,10 @@ namespace Ambarina.BLL
             // Chama o método que já existe na InsumoDAL
             insumoDAL.BaixarEstoque(id, qtd);
         }
+
+        public string ObterUnidadeMedidaInsumo(int idInsumo)
+        {
+            return insumoDAL.ObterUnidadeMedida(idInsumo);
+        }
     }
 }
