@@ -445,22 +445,15 @@ namespace Ambarina.UI
             try
             {
                 //Validação e Conversão Segura dos dados da tela
-                if (cmbInsumo.SelectedValue == null || cmbProduto.SelectedValue == null)
+                if (cmbProduto.SelectedValue == null || cmbAroma.SelectedValue == null)
                 {
-                    MessageBox.Show("Selecione o insumo e o produto antes de finalizar.");
+                    MessageBox.Show("Selecione o produto e o aroma antes de finalizar.");
                     return;
                 }
 
-                int idInsumo = Convert.ToInt32(cmbInsumo.SelectedValue);
                 int idProduto = Convert.ToInt32(cmbProduto.SelectedValue);
 
                 //Uso do TryParse para evitar erros de formato (campo vazio ou letras)
-                if (!decimal.TryParse(txtQtdInsumo.Text, out decimal qtdInsumo))
-                {
-                    MessageBox.Show("Quantidade de insumo inválida.");
-                    return;
-                }
-
                 if (!int.TryParse(txtQtdeProduzida.Text, out int qtdProduzida))
                 {
                     MessageBox.Show("Quantidade produzida inválida.");
@@ -468,17 +461,14 @@ namespace Ambarina.UI
                 }
 
                 //Chamar as BLLs
-                InsumoBLL insumoBll = new InsumoBLL();
                 ProdutoBLL produtoBll = new ProdutoBLL();
 
                 //Executar as ações no banco
-                insumoBll.RegistrarConsumoInsumo(idInsumo, qtdInsumo);
                 produtoBll.AdicionarEstoqueProduto(idProduto, qtdProduzida);
 
                 MessageBox.Show("Produção finalizada! Estoques atualizados com sucesso.", "Ambarina", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 //Limpar e atualizar
-                txtQtdInsumo.Clear();
                 txtQtdeProduzida.Clear();
                 AtualizarGrid();
             }
@@ -624,14 +614,14 @@ namespace Ambarina.UI
             int id = Convert.ToInt32(dgvListaReceitas.Rows[e.RowIndex].Cells["id_receita"].Value);
 
             // Lógica Excluir
-            if (dgvListaReceitas.Columns[e.ColumnIndex].Name == "colBtnExcluirReceita")
+            if (dgvListaReceitas.Columns[e.ColumnIndex].Name == "ColBtnExcluirReceita")
             {
                 if (MessageBox.Show("Deseja excluir permanentemente esta receita da Ambarina?", "Excluir",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
                     try
                     {
-                        new ReceitaBLL().ExcluirReceita(idReceitaSelecionada);
+                        new ReceitaBLL().ExcluirReceita(id);
                         MessageBox.Show("Receita excluída com sucesso!");
                         AtualizarGradeReceitas();
                         LimparCamposReceita();
@@ -641,7 +631,7 @@ namespace Ambarina.UI
             }
 
             // Lógica Editar
-            if (dgvListaReceitas.Columns[e.ColumnIndex].Name == "colEditarReceita")
+            if (dgvListaReceitas.Columns[e.ColumnIndex].Name == "ColBtnEditarReceita")
             {
                 idReceitaSelecionada = Convert.ToInt32(dgvListaReceitas.Rows[e.RowIndex].Cells["id_receita"].Value);
                 cmbProdutoBase.Text = dgvListaReceitas.Rows[e.RowIndex].Cells["Produto"].Value.ToString();
@@ -654,16 +644,23 @@ namespace Ambarina.UI
                 ReceitaBLL bll = new ReceitaBLL();
                 DataTable dtItens = bll.ListarItensDaReceita(idReceitaSelecionada);
 
-                foreach (DataRow dr in dtItens.Rows)
+                // Verificar se o DataTable tem dados
+                if (dtItens != null && dtItens.Rows.Count > 0)
                 {
-                    // Adiciona a linha e preenche usando os nomes exatos das colunas do seu Designer
-                    int rowIndex = dgvItensReceita.Rows.Add();
-                    dgvItensReceita.Rows[rowIndex].Cells["colInsumo"].Value = dr["Insumo"].ToString();
-                    dgvItensReceita.Rows[rowIndex].Cells["colQtd"].Value = dr["Qtd"].ToString();
-                    dgvItensReceita.Rows[rowIndex].Cells["colUnidade"].Value = dr["Unid"].ToString();
+                    foreach (DataRow dr in dtItens.Rows)
+                    {
+                        // Adiciona a linha e preenche usando os nomes exatos das colunas do seu DataTable
+                        int rowIndex = dgvItensReceita.Rows.Add();
+
+                        // Preenchimento seguro das colunas
+                        dgvItensReceita.Rows[rowIndex].Cells["colInsumo"].Value = dr["Insumo"]?.ToString() ?? "";
+                        dgvItensReceita.Rows[rowIndex].Cells["colQtd"].Value = dr["Qtd"]?.ToString() ?? "0";
+                        dgvItensReceita.Rows[rowIndex].Cells["colUnidade"].Value = dr["Unid"]?.ToString() ?? "";
+                    }
                 }
 
                 btnSalvarReceitaCompleta.Text = "ATUALIZAR RECEITA";
+                pnlCardReceita.BackColor = Color.FromArgb(255, 252, 240);
             }
         }
 
@@ -674,15 +671,47 @@ namespace Ambarina.UI
             // Se o valor da célula de insumo for nulo, ignora o clique para não quebrar
             if (dgvItensReceita.Rows[e.RowIndex].Cells["colInsumo"].Value == null) return;
 
+            // Nomes possíveis da coluna de excluir (conforme Designer)
+            string nomeColExcluir1 = "colBtnExcluirItensReceita";
+            string nomeColExcluir2 = "colExcluirItensReceita"; // fallback se tiver variação
+            string nomeColEditar = "ColBtnEditarItensReceita";
+
             // Excluir item
-            if (dgvItensReceita.Columns[e.ColumnIndex].Name == "colExcluirItensReceita")
+            if (dgvItensReceita.Columns[e.ColumnIndex].Name == nomeColExcluir1 ||
+                dgvItensReceita.Columns[e.ColumnIndex].Name == nomeColExcluir2)
             {
-                MessageBox.Show("Selecione um Produto Base.", "Erro de Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                if (MessageBox.Show("Deseja remover este insumo da lista?", "Remover Insumo", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                    return;
+
+                // Se a grid estiver vinculada a um DataSource (vinda do banco),
+                // desconecta e converte para linhas manuais para permitir remoção e edição local
+                if (dgvItensReceita.DataSource != null)
+                {
+                    var dt = dgvItensReceita.DataSource as DataTable;
+                    dgvItensReceita.DataSource = null;
+                    dgvItensReceita.Rows.Clear();
+
+                    if (dt != null)
+                    {
+                        foreach (DataRow dr in dt.Rows)
+                        {
+                            int idx = dgvItensReceita.Rows.Add();
+                            dgvItensReceita.Rows[idx].Cells["colInsumo"].Value = dr["Insumo"]?.ToString() ?? "";
+                            dgvItensReceita.Rows[idx].Cells["colQtd"].Value = dr["Qtd"]?.ToString() ?? "0";
+                            dgvItensReceita.Rows[idx].Cells["colUnidade"].Value = dr["Unid"]?.ToString() ?? "";
+                        }
+                    }
+                }
+
+                // Remove a linha (agora em modo manual)
+                if (e.RowIndex >= 0 && e.RowIndex < dgvItensReceita.Rows.Count)
+                    dgvItensReceita.Rows.RemoveAt(e.RowIndex);
+
                 return;
             }
 
-            // Editar item
-            if (dgvItensReceita.Columns[e.ColumnIndex].Name == "ColBtnEditarItensReceita")
+            // Editar item (comportamento existente)
+            if (dgvItensReceita.Columns[e.ColumnIndex].Name == nomeColEditar)
             {
                 cmbInsumo.Text = dgvItensReceita.Rows[e.RowIndex].Cells["colInsumo"].Value.ToString();
                 txtQtdInsumo.Text = dgvItensReceita.Rows[e.RowIndex].Cells["colQtd"].Value.ToString();
@@ -710,7 +739,33 @@ namespace Ambarina.UI
                 receita.IdProduto = Convert.ToInt32(cmbProdutoBase.SelectedValue);
                 receita.AromaPadrao = txtAroma.Text;
 
-                // 3. Criar a lista de insumos percorrendo a Grid da Esquerda
+                // 3. Detectar insumos duplicados na grid antes de montar a lista
+                var nomeCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                foreach (DataGridViewRow row in dgvItensReceita.Rows)
+                {
+                    if (!row.IsNewRow && row.Cells["colInsumo"].Value != null)
+                    {
+                        string nome = row.Cells["colInsumo"].Value.ToString().Trim();
+                        if (string.IsNullOrEmpty(nome)) continue;
+                        if (nomeCounts.ContainsKey(nome)) nomeCounts[nome]++;
+                        else nomeCounts[nome] = 1;
+                    }
+                }
+
+                var duplicados = nomeCounts.Where(kvp => kvp.Value > 1).ToList();
+                if (duplicados.Any())
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine("A receita contém insumos duplicados:");
+                    foreach (var d in duplicados)
+                        sb.AppendLine($"- {d.Key} ({d.Value}x)");
+                    sb.AppendLine();
+                    sb.AppendLine("Edite o insumo existente na lista usando o ícone ✎ em vez de adicionar um duplicado.");
+                    MessageBox.Show(sb.ToString(), "Insumo duplicado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // 4. Criar a lista de insumos percorrendo a Grid da Esquerda
                 List<ItensReceitaDTO> listaItens = new List<ItensReceitaDTO>();
                 foreach (DataGridViewRow row in dgvItensReceita.Rows)
                 {
@@ -732,7 +787,7 @@ namespace Ambarina.UI
 
                 ReceitaBLL bll = new ReceitaBLL();
 
-                // 4. Lógica de Salvar ou Editar
+                // 5. Lógica de Salvar ou Editar
                 if (idReceitaSelecionada == 0)
                 {
                     bll.SalvarReceitaCompleta(receita, listaItens);
@@ -744,12 +799,12 @@ namespace Ambarina.UI
                     MessageBox.Show($"Receita de {txtAroma.Text} atualizada com sucesso!", "Ambarina", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
-                // 5. O PULO DO GATO: Resetar o formulário para o estado inicial
+                // 6. Resetar o formulário para o estado inicial
                 idReceitaSelecionada = 0; // Importantíssimo para a próxima receita não virar edição
                 btnSalvarReceitaCompleta.Text = "SALVAR RECEITA";
                 pnlCardReceita.BackColor = Color.White; // Volta a cor original se você mudou no editar
 
-                // 6. Atualizar Grids e Limpar
+                // 7. Atualizar Grids e Limpar
                 AtualizarGradeReceitas();
                 if (typeof(FrmMenuPrincipal).GetMethod("CarregarComboAromas") != null) CarregarComboAromas();
 
