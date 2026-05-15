@@ -71,6 +71,7 @@
             // 
             // lblRedefinirSenha
             // 
+            lblRedefinirSenha.Cursor = Cursors.Hand;
             lblRedefinirSenha.Font = new Font("Montserrat", 8.999999F, FontStyle.Underline, GraphicsUnit.Point, 0);
             lblRedefinirSenha.ForeColor = Color.FromArgb(190, 169, 137);
             lblRedefinirSenha.Location = new Point(34, 355);
@@ -247,6 +248,7 @@
             txtLoginConfirmaSenha.Visible = false;
             txtLoginConfirmaSenha.TextChanged += txtLoginSenha_TextChanged;
             txtLoginConfirmaSenha.Enter += txtLoginConfirmaSenha_Enter;
+            txtLoginConfirmaSenha.KeyDown += txtLoginConfirmaSenha_KeyDown;
             txtLoginConfirmaSenha.Leave += txtLoginConfirmaSenha_Leave;
             // 
             // btnSalvarSenha

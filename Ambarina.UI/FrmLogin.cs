@@ -174,6 +174,7 @@ namespace Ambarina.UI
                 else
                 {
                     MessageBox.Show("Usuário ou senha incorretos.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtLoginSenha.Clear(); // Limpa o campo de senha para nova tentativa
                 }
             }
             catch (Exception ex)
@@ -201,6 +202,7 @@ namespace Ambarina.UI
             {
                 e.SuppressKeyPress = true;
                 btnLoginEntrar.PerformClick(); // Executa o clique do botão via código
+                txtLoginSenha.Clear(); // Limpa o campo de senha para nova tentativa
             }
         }
 
@@ -273,47 +275,53 @@ namespace Ambarina.UI
         {
             try
             {
-                // Valida campos
                 string usuario = txtLoginUsuario.Text?.Trim() ?? "";
                 string nova = txtLoginNovaSenha.Text ?? "";
                 string confirma = txtLoginConfirmaSenha.Text ?? "";
 
+                // 1. Valida se o usuário foi preenchido
                 if (string.IsNullOrWhiteSpace(usuario) || usuario == "Usuário")
                 {
                     MessageBox.Show("Informe o usuário para redefinir a senha.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                // Verifica placeholders
+                // 2. Verifica se os campos ainda estão com o texto de Placeholder
                 if (nova == "Nova senha" || confirma == "Confirmar senha")
                 {
                     MessageBox.Show("Informe a nova senha e confirme.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    LimparCamposSenhaRedefinicao();
                     return;
                 }
 
+                // 3. Verifica se as senhas são iguais
                 if (nova != confirma)
                 {
                     MessageBox.Show("As senhas não conferem.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    LimparCamposSenhaRedefinicao();
                     return;
                 }
 
+                // 4. Valida as regras de complexidade (Regex)
                 if (!ValidarSenha(nova, out string motivo))
                 {
                     MessageBox.Show($"Senha inválida: {motivo}", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    LimparCamposSenhaRedefinicao();
                     return;
                 }
 
-                // Valida se a nova senha é diferente da senha anterior
                 UsuarioBLL bll = new UsuarioBLL();
+
+                // 5. Valida se é igual à senha anterior
                 if (!bll.ValidarSenhaAnterior(usuario, nova))
                 {
                     MessageBox.Show("A nova senha não pode ser igual à senha anterior.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    LimparCamposSenhaRedefinicao();
                     return;
                 }
 
-                // Persiste via BLL
-                bool ok = bll.AlterarSenha(usuario, nova);
-                if (ok)
+                // 6. Tenta persistir no banco
+                if (bll.AlterarSenha(usuario, nova))
                 {
                     MessageBox.Show("Senha alterada com sucesso. Faça login com a nova senha.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     SetModoRedefinicao(false);
@@ -321,12 +329,25 @@ namespace Ambarina.UI
                 else
                 {
                     MessageBox.Show("Usuário não encontrado ou erro ao salvar a senha.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    txtLoginUsuario.Clear();
+                    LimparCamposSenhaRedefinicao();
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LimparCamposSenhaRedefinicao();
             }
+        }
+
+        // Método auxiliar para evitar repetição de código (DRY - Don't Repeat Yourself)
+        private void LimparCamposSenhaRedefinicao()
+        {
+            txtLoginNovaSenha.Clear();
+            txtLoginConfirmaSenha.Clear();
+
+            // Opcional: Voltar o foco para o primeiro campo de senha
+            txtLoginNovaSenha.Focus();
         }
 
         // Valida regras de segurança da senha
@@ -411,6 +432,19 @@ namespace Ambarina.UI
         private void FrmLogin_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void txtLoginConfirmaSenha_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Verifica se a tecla pressionada foi o Enter
+            if (e.KeyCode == Keys.Enter)
+            {
+                // Evita o som de "beep" do Windows
+                e.SuppressKeyPress = true;
+
+                // Executa a ação do botão Salvar
+                btnSalvarSenha.PerformClick();
+            }
         }
     }
 }
