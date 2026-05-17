@@ -168,6 +168,15 @@ namespace Ambarina.UI
 
             //carregar cmb de insumos na produção
             CarregarComboInsumos();
+
+            txtLote.Text = new ProducaoBLL().ObterProximoLote(); // Gera o próximo lote sequencial para ficar pronto na tela
+
+            //atualizar grid produção
+            AtualizarGridProducao();
+
+            //RECEITA: Deixa o campo de unidade de medida protegido, pois ele é preenchido automaticamente com base no insumo selecionado
+            txtUnidadeReceita.ReadOnly = true;
+            txtUnidadeReceita.BackColor = Color.FromArgb(240, 240, 240); // Feedback visual de bloqueado
         }
 
         private void lbLoginExit_Click(object sender, EventArgs e)
@@ -182,6 +191,8 @@ namespace Ambarina.UI
             AtualizarCabecalho("ALMOXARIFADO", "Gestão de insumos e matérias-primas (Cera, Essências e Pavios).");
 
             AbrirPainel(pnlViewAlmoxarifado);
+
+            AtualizarGrid();
         }
 
         private void btnNavProducao_Click(object sender, EventArgs e)
@@ -190,12 +201,23 @@ namespace Ambarina.UI
 
             AtualizarCabecalho("PRODUÇÃO", "Formulação de velas e registro de fabricação com baixa de estoque.");
 
-            // CARREGAMENTO DE DADOS SINCRONIZADO
-            CarregarComboInsumos();    // Lista de matérias-primas
-            CarregarComboProdutos();   // Lista de produtos para a área de Produção (baixo)
-            CarregarProdutosBase();    // Lista de produtos para a área de Receita (cima)
-            CarregarComboAromas();     // Lista de aromas vindos das receitas cadastradas
-            AtualizarGradeReceitas();  // Lista o catálogo de receitas na grid da direita
+            try
+            {
+                // DESLIGA o evento temporariamente para o Windows Forms não dar disparos fantasmas
+                cmbInsumo.SelectedIndexChanged -= cmbInsumo_SelectedIndexChanged;
+
+                // CARREGAMENTO DE DADOS SINCRONIZADO
+                CarregarComboInsumos();    // Lista de matérias-primas
+                CarregarComboProdutos();   // Lista de produtos para a área de Produção (baixo)
+                CarregarProdutosBase();    // Lista de produtos para a área de Receita (cima)
+                CarregarComboAromas();     // Lista de aromas vindos das receitas cadastradas
+                AtualizarGradeReceitas();  // Lista o catálogo de receitas na grid da direita
+            }
+            finally
+            {
+                // REATIVA o evento agora que todos os combos já estão carregados e estáveis
+                cmbInsumo.SelectedIndexChanged += cmbInsumo_SelectedIndexChanged;
+            }
 
             AbrirPainel(pnlViewProducao);
         }
@@ -444,37 +466,55 @@ namespace Ambarina.UI
         {
             try
             {
-                //Validação e Conversão Segura dos dados da tela
-                if (cmbProduto.SelectedValue == null || cmbAroma.SelectedValue == null)
+                //Validações básicas de Interface
+                if (cmbProduto.SelectedValue == null)
                 {
-                    MessageBox.Show("Selecione o produto e o aroma antes de finalizar.");
+                    MessageBox.Show("Selecione um produto antes de finalizar a produção.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                int idProduto = Convert.ToInt32(cmbProduto.SelectedValue);
-
-                //Uso do TryParse para evitar erros de formato (campo vazio ou letras)
-                if (!int.TryParse(txtQtdeProduzida.Text, out int qtdProduzida))
+                if (!int.TryParse(txtQtdeProduzida.Text, out int qtdProduzida) || qtdProduzida <= 0)
                 {
-                    MessageBox.Show("Quantidade produzida inválida.");
+                    MessageBox.Show("Informe uma quantidade produzida válida e maior que zero.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                //Chamar as BLLs
-                ProdutoBLL produtoBll = new ProdutoBLL();
+                //Alimentando o DTO de Produção com as regras estabelecidas
+                ProducaoDTO novaProducao = new ProducaoDTO();
+                novaProducao.IdProduto = Convert.ToInt32(cmbProduto.SelectedValue);
+                novaProducao.DataProducao = dtpData.Value;
+                novaProducao.QtdeProduzida = qtdProduzida;
+                novaProducao.Lote = txtLote.Text;
+                novaProducao.Status = "EM CURA"; // Definido que toda produção inicia EM CURA
 
-                //Executar as ações no banco
-                produtoBll.AdicionarEstoqueProduto(idProduto, qtdProduzida);
+                //Executando o processamento completo na camada de negócio
+                ProducaoBLL producaoBll = new ProducaoBLL();
+                producaoBll.ProcessarProducaoCompleta(novaProducao);
 
-                MessageBox.Show("Produção finalizada! Estoques atualizados com sucesso.", "Ambarina", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // Feedback de sucesso para o usuário
+                MessageBox.Show($"Produção do lote {novaProducao.Lote} registrada com sucesso!\nEstoques de insumos atualizados.",
+                                "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                //Limpar e atualizar
+                // Resetando e atualizando a tela para a próxima operação
                 txtQtdeProduzida.Clear();
-                AtualizarGrid();
+                cmbProduto.SelectedIndex = -1;
+                cmbAroma.SelectedIndex = -1;
+
+                // Recarrega as grids para mostrar os novos saldos na hora
+                AtualizarGrid(); // Atualiza Almoxarifado
+                if (typeof(FrmMenuPrincipal).GetMethod("AtualizarGridProdutos") != null) AtualizarGridProdutos(); // Atualiza Estoque
+
+                // forçar a Grid de Produção a se atualizar!
+                AtualizarGridProducao();
+
+                // Gera o próximo lote sequencial para ficar pronto na tela
+                txtLote.Text = producaoBll.ObterProximoLote();
+
+
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erro ao processar produção: " + ex.Message);
+                MessageBox.Show(ex.Message, "Erro no Processamento", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void btnFinalizarProducao_Click(object sender, EventArgs e)
@@ -503,18 +543,26 @@ namespace Ambarina.UI
 
         private void cmbInsumo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Quando seleciona um insumo, carrega automaticamente a unidade dele
-            if (cmbInsumo.SelectedIndex != -1)
+            // Só age se o usuário selecionou uma linha válida e o valor não for nulo/vazio
+            if (cmbInsumo.SelectedIndex != -1 && cmbInsumo.SelectedValue != null && !string.IsNullOrEmpty(cmbInsumo.SelectedValue.ToString()))
             {
+                // Evita executar o código caso o valor seja o próprio objeto do sistema durante transições
+                if (cmbInsumo.SelectedValue.ToString() == "System.Data.DataRowView") return;
+
                 try
                 {
-                    InsumoBLL bll = new InsumoBLL();
-                    string unidade = bll.ObterUnidadeMedidaInsumo(Convert.ToInt32(cmbInsumo.SelectedValue));
-                    cmbUnidadeReceita.Text = unidade;
+                    if (int.TryParse(cmbInsumo.SelectedValue.ToString(), out int idInsumo))
+                    {
+                        InsumoBLL bll = new InsumoBLL();
+                        string unidade = bll.ObterUnidadeMedidaInsumo(idInsumo);
+
+                        // Injeta na tela
+                        txtUnidadeReceita.Text = unidade;
+                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Erro ao carregar unidade: " + ex.Message);
+                    MessageBox.Show("Erro ao atualizar unidade de medida: " + ex.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
@@ -586,7 +634,6 @@ namespace Ambarina.UI
         {
             if (cmbInsumo.SelectedIndex != -1 && !string.IsNullOrEmpty(txtQtdInsumo.Text))
             {
-                // IMPORTANTE: Para adicionar linhas manualmente, o DataSource deve ser nulo
                 if (dgvItensReceita.DataSource != null)
                 {
                     dgvItensReceita.DataSource = null;
@@ -597,12 +644,14 @@ namespace Ambarina.UI
 
                 dgvItensReceita.Rows[n].Cells["colInsumo"].Value = cmbInsumo.Text;
                 dgvItensReceita.Rows[n].Cells["colQtd"].Value = txtQtdInsumo.Text;
-                dgvItensReceita.Rows[n].Cells["colUnidade"].Value = cmbUnidadeReceita.Text;
+
+                // CORREÇÃO: Pega o texto gerado automaticamente no seu TextBox e joga na coluna da Grid!
+                dgvItensReceita.Rows[n].Cells["colUnidade"].Value = txtUnidadeReceita.Text;
 
                 // Limpa campos
                 cmbInsumo.SelectedIndex = -1;
                 txtQtdInsumo.Clear();
-                cmbUnidadeReceita.SelectedIndex = -1;
+                txtUnidadeReceita.Clear(); // Limpa o campo de unidade também para o próximo
                 cmbInsumo.Focus();
             }
         }
@@ -715,7 +764,9 @@ namespace Ambarina.UI
             {
                 cmbInsumo.Text = dgvItensReceita.Rows[e.RowIndex].Cells["colInsumo"].Value.ToString();
                 txtQtdInsumo.Text = dgvItensReceita.Rows[e.RowIndex].Cells["colQtd"].Value.ToString();
-                cmbUnidadeReceita.Text = dgvItensReceita.Rows[e.RowIndex].Cells["colUnidade"].Value.ToString();
+
+                // CORREÇÃO: Devolve o valor da unidade para o seu TextBox ao invés do combo antigo
+                txtUnidadeReceita.Text = dgvItensReceita.Rows[e.RowIndex].Cells["colUnidade"].Value?.ToString() ?? "";
 
                 dgvItensReceita.Rows.RemoveAt(e.RowIndex);
                 txtQtdInsumo.Focus();
@@ -825,13 +876,165 @@ namespace Ambarina.UI
             dgvItensReceita.Rows.Clear();
             cmbProdutoBase.SelectedIndex = -1;
             cmbInsumo.SelectedIndex = -1;
-            cmbUnidadeReceita.SelectedIndex = -1;
+            //cmbUnidadeReceita.SelectedIndex = -1;
             idReceitaSelecionada = 0;
             btnSalvarReceitaCompleta.Text = "SALVAR RECEITA";
             pnlCardReceita.BackColor = Color.White;
             cmbProdutoBase.Focus();
         }
 
+        private void AtualizarGridProducao()
+        {
+            try
+            {
+                ProducaoBLL bll = new ProducaoBLL();
+                DataTable dt = bll.ListarProducoes();
+
+                // Desvincula eventos temporariamente para não disparar validações falsas no carregamento
+                dgvProducao.CellValueChanged -= dgvProducao_CellValueChanged;
+
+                dgvProducao.Rows.Clear();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    int rowIndex = dgvProducao.Rows.Add();
+                    DataGridViewRow gridRow = dgvProducao.Rows[rowIndex];
+
+                    gridRow.Cells["dataGridViewTextBoxColumnColID"].Value = row["id_producao"];
+                    gridRow.Cells["dataGridViewTextBoxColData"].Value = Convert.ToDateTime(row["data_producao"]).ToString("dd/MM/yyyy");
+                    gridRow.Cells["dataGridViewTextBoxColProduto"].Value = row["nome_produto"];
+                    gridRow.Cells["ColAroma"].Value = row["aroma_padrao"] != DBNull.Value ? row["aroma_padrao"].ToString() : "Sem Aroma";
+                    gridRow.Cells["dataGridViewTextBoxColLote"].Value = row["lote"];
+                    gridRow.Cells["dataGridViewTextBoxColStatus"].Value = row["status"].ToString();
+                    gridRow.Cells["colRemoverProd"].Value = "Excluir";
+
+                    gridRow.Tag = new { IdProduto = row["id_produto"], Qtd = row["qtde_produzida"] };
+
+                    // TRAVA SÊNIOR: Se o status já for EMBALADA, bloqueia a linha imediatamente
+                    string statusAtual = row["status"].ToString().Trim().ToUpper();
+                    if (statusAtual == "EMBALADA")
+                    {
+                        // Deixa a célula de Status como ReadOnly (não dá para abrir o combo)
+                        gridRow.Cells["dataGridViewTextBoxColStatus"].ReadOnly = true;
+
+                        // Transforma a célula de exclusão em texto puro e limpa o valor para o botão sumir/ficar inativo
+                        gridRow.Cells["colRemoverProd"].Value = "---";
+                        gridRow.Cells["colRemoverProd"].ReadOnly = true;
+
+                        // Feedback visual: pinta a linha com um cinza bem levinho sofisticado
+                        gridRow.DefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
+                        gridRow.DefaultCellStyle.ForeColor = Color.DarkGray;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar listagem de produção: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                dgvProducao.CellValueChanged += dgvProducao_CellValueChanged;
+            }
+        }
+
+        private void dgvProducao_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dgvProducao.Columns[e.ColumnIndex].Name == "dataGridViewTextBoxColStatus")
+            {
+                DataGridViewRow row = dgvProducao.Rows[e.RowIndex];
+                int idProducao = Convert.ToInt32(row.Cells["dataGridViewTextBoxColumnColID"].Value);
+                string novoStatus = row.Cells["dataGridViewTextBoxColStatus"].Value.ToString().Trim().ToUpper();
+
+                dynamic dadosOcultos = row.Tag;
+                int idProduto = Convert.ToInt32(dadosOcultos.IdProduto);
+                int qtdProduzida = Convert.ToInt32(dadosOcultos.Qtd);
+
+                if (novoStatus == "EMBALADA")
+                {
+                    DialogResult resposta = MessageBox.Show(
+                        $"Você tem certeza que deseja alterar o status do lote para EMBALADA?\n\nIsso irá adicionar automaticamente {qtdProduzida} unidades deste produto ao seu estoque de Pronta Entrega e esta ação trancará este lote contra alterações.",
+                        "Confirmação de Entrada de Estoque",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question
+                    );
+
+                    if (resposta == DialogResult.No)
+                    {
+                        MessageBox.Show("Alteração cancelada. O estoque permanece inalterado.", "Operação Cancelada", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        AtualizarGridProducao();
+                        return;
+                    }
+                }
+
+                try
+                {
+                    ProducaoBLL bll = new ProducaoBLL();
+                    bll.AtualizarStatus(idProducao, novoStatus, idProduto, qtdProduzida);
+
+                    MessageBox.Show($"Status do lote atualizado para {novoStatus} com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Recarrega a grid para aplicar o visual cinza e as travas ReadOnly de forma limpa direto do banco
+                    AtualizarGridProducao();
+
+                    if (typeof(FrmMenuPrincipal).GetMethod("AtualizarGridProdutos") != null) AtualizarGridProdutos();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Erro ao atualizar status: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AtualizarGridProducao();
+                }
+            }
+        }
+
+        private void dgvProducao_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Verifica se o clique foi de fato na coluna de remover/excluir e não em uma linha inválida (-1)
+            if (e.RowIndex >= 0 && dgvProducao.Columns[e.ColumnIndex].Name == "colRemoverProd")
+            {
+                DataGridViewRow row = dgvProducao.Rows[e.RowIndex];
+
+                // Coleta os dados da linha selecionada
+                int idProducao = Convert.ToInt32(row.Cells["dataGridViewTextBoxColumnColID"].Value);
+                string lote = row.Cells["dataGridViewTextBoxColLote"].Value.ToString();
+                string status = row.Cells["dataGridViewTextBoxColStatus"].Value.ToString();
+
+                // Recupera os IDs e quantidades que guardamos no Tag da linha ao carregar a grid
+                dynamic dadosOcultos = row.Tag;
+                int idProduto = Convert.ToInt32(dadosOcultos.IdProduto);
+                int qtdProduzida = Convert.ToInt32(dadosOcultos.Qtd);
+
+                // Caixa de diálogo confirmando se o usuário quer mesmo apagar a digitação incorreta
+                DialogResult confirmacao = MessageBox.Show(
+                    $"Deseja realmente excluir o registro do lote {lote}?\n\nEsta ação apagará o histórico permanentemente e devolverá todos os insumos consumidos de volta ao Almoxarifado.",
+                    "Confirmar Exclusão de Registro",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning
+                );
+
+                if (confirmacao == DialogResult.Yes)
+                {
+                    try
+                    {
+                        // Dispara o estorno e deleção através da BLL
+                        ProducaoBLL bll = new ProducaoBLL();
+                        bll.ProcessarExclusaoComEstorno(idProducao, idProduto, qtdProduzida, status);
+
+                        MessageBox.Show($"Produção do lote {lote} excluída e insumos devolvidos com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        // Recarrega a Grid de Produção para sumir com a linha deletada na hora
+                        AtualizarGridProducao();
+
+                        // Atualiza o lote do formulário de inserção, pois o número livre mudou!
+                        txtLote.Text = bll.ObterProximoLote();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Se cair na trava da BLL (ex: status Embalada) ou der erro no MySQL, exibe aqui em formato amigável
+                        MessageBox.Show(ex.Message, "Aviso de Segurança", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
 
         ////ESTOQUE - VISUALIZAR E GERENCIAR PRODUTOS
         private void AtualizarGridProdutos()
@@ -953,5 +1156,7 @@ namespace Ambarina.UI
                 txtNomeProduto.Focus();
             }
         }
+
+        
     }
 }
