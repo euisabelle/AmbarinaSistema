@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSplash));
             picSplashLogo = new PictureBox();
             progressBar1 = new ProgressBar();
             lbSplashCarregando = new Label();
@@ -98,6 +99,7 @@
             Controls.Add(progressBar1);
             Controls.Add(picSplashLogo);
             FormBorderStyle = FormBorderStyle.None;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmSplash";
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;

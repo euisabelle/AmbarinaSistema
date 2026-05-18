@@ -309,6 +309,7 @@
             Controls.Add(lbLoginExit);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             KeyPreview = true;
             Name = "FrmLogin";
             StartPosition = FormStartPosition.CenterScreen;
