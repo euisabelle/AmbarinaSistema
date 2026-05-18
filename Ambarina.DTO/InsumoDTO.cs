@@ -12,8 +12,9 @@ namespace Ambarina.DTO
         public string Nome { get; set; }
         public string Categoria { get; set; }
         public string UnidadeMedida { get; set; }
-        public decimal QtdeInicial { get; set; }
         public decimal CustoInicial { get; set; }
         public decimal EstoqueMinimo { get; set; }
+        public decimal QtdeInicial { get; set; } // Representa a Embalagem fixa
+        public decimal EstoqueAtual { get; set; }     // Representa o Saldo que sobra
     }
 }

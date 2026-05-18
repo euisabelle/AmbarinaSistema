@@ -19,11 +19,14 @@ namespace Ambarina.BLL
             return producaoDAL.ObterProximoLote();
         }
 
-        public void ProcessarProducaoCompleta(ProducaoDTO producao)
+        // Adicionamos o parâmetro idReceita vindo da seleção da UI
+        public void ProcessarProducaoCompleta(ProducaoDTO producao, int idReceita)
         {
-            // Validações de Negócio Sênior
             if (producao.IdProduto <= 0)
                 throw new Exception("Selecione um produto válido para a produção.");
+
+            if (idReceita <= 0)
+                throw new Exception("Selecione uma receita válida ou certifique-se de que o aroma selecionado possui uma receita cadastrada.");
 
             if (producao.QtdeProduzida <= 0)
                 throw new Exception("A quantidade produzida deve ser maior que zero.");
@@ -31,45 +34,24 @@ namespace Ambarina.BLL
             if (string.IsNullOrEmpty(producao.Lote))
                 throw new Exception("O número do lote não foi gerado corretamente.");
 
-            // 1. Busca a receita desse produto para descobrir quais insumos ele gasta
-            // Usamos o ID da receita que você captura ao selecionar a grade ou aroma
-            DataTable dtItensReceita = receitaDAL.ListarItensDaReceita(producao.IdProduto);
-
-            if (dtItensReceita == null || dtItensReceita.Rows.Count == 0)
-            {
-                throw new Exception("Não é possível produzir este item pois ele não possui uma receita cadastrada.");
-            }
-
-            // 2. Monta a lista calculando a proporção (Insumo da Receita x Quantidade Produzida)
-            List<ItensReceitaDTO> insumosParaBaixar = new List<ItensReceitaDTO>();
-            foreach (DataRow row in dtItensReceita.Rows)
-            {
-                decimal qtdUnitaria = Convert.ToDecimal(row["Qtd"]);
-                decimal qtdTotalConsumida = qtdUnitaria * producao.QtdeProduzida;
-
-                insumosParaBaixar.Add(new ItensReceitaDTO
-                {
-                    NomeInsumo = row["Insumo"].ToString(),
-                    Quantidade = qtdTotalConsumida
-                });
-            }
-
-            // 3. Dispara a transação atômica na DAL
-            producaoDAL.RegistrarProducaoCompleta(producao, insumosParaBaixar);
+            producaoDAL.RegistrarProducaoCompleta(producao, idReceita);
         }
+
         public DataTable ListarProducoes()
         {
             return producaoDAL.ListarProducoes();
         }
 
-        public void AtualizarStatus(int idProducao, string novoStatus, int idProduto, int qtdProduzida)
+        public void AtualizarStatus(int idProducao, string novoStatus, int idProduto, int qtdProduzida, int idReceita)
         {
             if (idProducao <= 0) throw new Exception("Lote inválido para atualização.");
             if (string.IsNullOrEmpty(novoStatus)) throw new Exception("O status não pode ser vazio.");
 
-            producaoDAL.AtualizarStatusProducao(idProducao, novoStatus, idProduto, qtdProduzida);
+            // Repassa para a DAL incluindo o idReceita para alimentar a pronta entrega corretamente
+            producaoDAL.AtualizarStatusProducao(idProducao, novoStatus, idProduto, qtdProduzida, idReceita);
         }
-        public void ProcessarExclusaoComEstorno(int idProducao, int idProduto, int qtdProduzida, string statusAtual)
+
+        public void ProcessarExclusaoComEstorno(int idProducao, int idProduto, int qtdProduzida, string statusAtual, int idReceita)
         {
             // Trava de segurança sênior: impede corromper o estoque de pronta entrega
             if (statusAtual.Trim().ToUpper() == "EMBALADA")
@@ -77,13 +59,11 @@ namespace Ambarina.BLL
                 throw new Exception("Não é possível excluir uma produção com status 'EMBALADA'. O produto já foi enviado ao estoque de pronta entrega. Caso necessário, ajuste o estoque manualmente na tela correspondente.");
             }
 
-            ReceitaDAL receitaDAL = new ReceitaDAL();
-            // 1. Busca quais insumos aquela receita gastava
-            DataTable dtItensReceita = receitaDAL.ListarItensDaReceita(idProduto);
+            // CORREÇÃO SÊNIOR: Agora buscamos os insumos pelo idReceita (aroma específico), não pelo idProduto genérico!
+            DataTable dtItensReceita = receitaDAL.ListarItensDaReceita(idReceita);
 
             List<ItensReceitaDTO> insumosParaDevolver = new List<ItensReceitaDTO>();
 
-            // 2. Se a receita existir, calcula a quantidade exata a ser devolvida
             if (dtItensReceita != null && dtItensReceita.Rows.Count > 0)
             {
                 foreach (DataRow row in dtItensReceita.Rows)
@@ -99,7 +79,7 @@ namespace Ambarina.BLL
                 }
             }
 
-            // 3. Repassa para a DAL executar a transação de exclusão e soma no estoque
+            // Repassa para a DAL executar o estorno no Almoxarifado e o DELETE da produção
             producaoDAL.ExcluirEEstornarProducao(idProducao, idProduto, qtdProduzida, insumosParaDevolver);
         }
     }

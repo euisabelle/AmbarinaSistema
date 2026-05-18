@@ -65,5 +65,19 @@ namespace Ambarina.BLL
             // Deve deletar o produto do banco
             produtoDAL.ExcluirProduto(id);
         }
+        public DataTable FiltrarEstoqueProntaEntrega(string buscaNome, string filtroCategoria, string filtroStatus)
+        {
+            // Passa os parâmetros limpos para a DAL executar
+            return produtoDAL.ListarEstoqueComFiltros(buscaNome?.Trim(), filtroCategoria, filtroStatus);
+        }
+
+        public void AjustarQuantidadeFisica(int idProduto, int idReceita, int novaQuantidade)
+        {
+            if (idProduto <= 0) throw new Exception("Produto inválido.");
+            if (idReceita <= 0) throw new Exception("Receita inválida.");
+            if (novaQuantidade < 0) throw new Exception("O estoque não pode ser negativo.");
+
+            produtoDAL.AtualizarQuantidadeEstoque(idProduto, idReceita, novaQuantidade);
+        }
     }
 }

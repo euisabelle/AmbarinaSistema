@@ -63,5 +63,10 @@ namespace Ambarina.BLL
 
             new ReceitaDAL().EditarReceita(receita, itens);
         }
+
+        public int ObterIdReceitaPorProdutoEAroma(int idProduto, string aroma)
+        {
+            return receitaDAL.ObterIdReceitaPorProdutoEAroma(idProduto, aroma);
+        }
     }
 }

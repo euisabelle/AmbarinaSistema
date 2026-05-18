@@ -18,8 +18,8 @@ namespace Ambarina.DAL
             try
             {
                 conexao.AbrirConexao();
-                // Buscamos o nome do produto (fazendo um JOIN) e o aroma padrão
-                string sql = "SELECT r.id_receita, p.nome as 'Produto', r.aroma_padrao as 'Aroma' " +
+                // Mantemos o id_receita e id_produto explícitos para mapeamento na Grid
+                string sql = "SELECT r.id_receita, p.id_produto, p.nome as 'Produto', r.aroma_padrao as 'Aroma' " +
                              "FROM receitas r " +
                              "INNER JOIN produtos p ON r.id_produto = p.id_produto " +
                              "ORDER BY p.nome ASC";
@@ -30,6 +30,27 @@ namespace Ambarina.DAL
                 return dt;
             }
             catch (Exception ex) { throw new Exception(ex.Message); }
+            finally { conexao.FecharConexao(); }
+        }
+
+        // O método deve buscar os itens pelo ID da RECEITA, e não do produto!
+        public DataTable ListarItensDaReceita(int idReceita)
+        {
+            try
+            {
+                conexao.AbrirConexao();
+                string sql = "SELECT i.nome as Insumo, ri.quantidade as Qtd, i.unidade_medida as Unid " +
+                             "FROM receita_insumos ri " +
+                             "INNER JOIN insumos i ON ri.insumos_id_insumo = i.id_insumo " +
+                             "WHERE ri.receitas_id_receita = @id";
+
+                MySqlDataAdapter da = new MySqlDataAdapter(sql, conexao.conectar);
+                da.SelectCommand.Parameters.AddWithValue("@id", idReceita);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+            catch (Exception ex) { throw new Exception("Erro ao carregar insumos da receita: " + ex.Message); }
             finally { conexao.FecharConexao(); }
         }
 
@@ -68,27 +89,6 @@ namespace Ambarina.DAL
                 cmdReceita.ExecuteNonQuery();
             }
             catch (Exception ex) { throw new Exception(ex.Message); }
-            finally { conexao.FecharConexao(); }
-        }
-
-        public DataTable ListarItensDaReceita(int idReceita)
-        {
-            try
-            {
-                conexao.AbrirConexao();
-                // Ajustado para os nomes exatos do seu novo diagrama: receita_insumos
-                string sql = "SELECT i.nome as Insumo, ri.quantidade as Qtd, i.unidade_medida as Unid " +
-                             "FROM receita_insumos ri " +
-                             "INNER JOIN insumos i ON ri.insumos_id_insumo = i.id_insumo " +
-                             "WHERE ri.receitas_id_receita = @id";
-
-                MySqlDataAdapter da = new MySqlDataAdapter(sql, conexao.conectar);
-                da.SelectCommand.Parameters.AddWithValue("@id", idReceita);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                return dt;
-            }
-            catch (Exception ex) { throw new Exception("Erro ao carregar insumos: " + ex.Message); }
             finally { conexao.FecharConexao(); }
         }
 
@@ -192,5 +192,31 @@ namespace Ambarina.DAL
             catch (Exception ex) { throw new Exception(ex.Message); }
             finally { conexao.FecharConexao(); }
         }
+
+        public int ObterIdReceitaPorProdutoEAroma(int idProduto, string aroma)
+        {
+            try
+            {
+                conexao.AbrirConexao();
+                // Buscamos o id da receita batendo exatamente o produto e o aroma tirando espaços em branco
+                string sql = "SELECT id_receita FROM receitas WHERE id_produto = @idProd AND TRIM(aroma_padrao) = TRIM(@aroma) LIMIT 1";
+                MySqlCommand cmd = new MySqlCommand(sql, conexao.conectar);
+                cmd.Parameters.AddWithValue("@idProd", idProduto);
+                cmd.Parameters.AddWithValue("@aroma", aroma);
+
+                object result = cmd.ExecuteScalar();
+                return result != null ? Convert.ToInt32(result) : 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao buscar ID da receita via ComboBox: " + ex.Message);
+            }
+            finally
+            {
+                conexao.FecharConexao();
+            }
+        }
+
+
     }
 }

@@ -201,8 +201,7 @@ namespace Ambarina.UI
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
-                btnLoginEntrar.PerformClick(); // Executa o clique do botão via código
-                txtLoginSenha.Clear(); // Limpa o campo de senha para nova tentativa
+                btnLoginEntrar.PerformClick(); // Apenas dispara o clique e deixa o método do botão processar tudo
             }
         }
 

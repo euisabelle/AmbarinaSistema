@@ -18,14 +18,17 @@ namespace Ambarina.DAL
             try
             {
                 conexao.AbrirConexao();
-                string sql = "INSERT INTO insumos (nome, categoria, unidade_medida, estoque_atual, custo_unitario, estoque_minimo) " +
-                             "VALUES (@nome, @cat, @un, @est, @custo, @min)";
+                string sql = "INSERT INTO insumos (nome, categoria, unidade_medida, estoque_atual, quantidade_inicial, custo_unitario, estoque_minimo) " +
+                             "VALUES (@nome, @cat, @un, @estAtual, @qtdInicial, @custo, @min)";
 
                 MySqlCommand cmd = new MySqlCommand(sql, conexao.conectar);
                 cmd.Parameters.AddWithValue("@nome", insumo.Nome);
                 cmd.Parameters.AddWithValue("@cat", insumo.Categoria);
                 cmd.Parameters.AddWithValue("@un", insumo.UnidadeMedida);
-                cmd.Parameters.AddWithValue("@est", insumo.QtdeInicial);
+
+                // Vincula os valores certos coletados da tela
+                cmd.Parameters.AddWithValue("@estAtual", insumo.EstoqueAtual);
+                cmd.Parameters.AddWithValue("@qtdInicial", insumo.QtdeInicial);
                 cmd.Parameters.AddWithValue("@custo", insumo.CustoInicial);
                 cmd.Parameters.AddWithValue("@min", insumo.EstoqueMinimo);
 
@@ -44,10 +47,21 @@ namespace Ambarina.DAL
             {
                 conexao.AbrirConexao();
                 DataTable dt = new DataTable();
-                string sql = "SELECT id_insumo as 'ID', nome as 'Nome', categoria as 'Categoria', " +
-                "unidade_medida as 'Unidade', estoque_atual as 'Estoque', " +
-                "custo_unitario as 'Custo (R$)', estoque_minimo as 'Mínimo', " +
-                "(estoque_atual * custo_unitario) as 'Total' FROM insumos";
+
+                // Trazemos o custo_unitario bruto para o C# usar no Editar,
+                // e calculamos o 'Custo Unit' (por grama) e o 'Total' proporcional para a Grid.
+                string sql = @"SELECT 
+                        id_insumo as 'ID', 
+                        nome as 'Nome', 
+                        categoria as 'Categoria', 
+                        unidade_medida as 'Unidade', 
+                        quantidade_inicial as 'Qtd Embalagem', 
+                        estoque_atual as 'Estoque Atual', 
+                        custo_unitario as 'Custo Total',
+                        ROUND((custo_unitario / quantidade_inicial), 4) as 'Custo Unit', 
+                        estoque_minimo as 'Mínimo', 
+                        ROUND(estoque_atual * (custo_unitario / quantidade_inicial), 2) as 'Total' 
+                       FROM insumos";
 
                 MySqlDataAdapter da = new MySqlDataAdapter(sql, conexao.conectar);
                 da.Fill(dt);
@@ -60,7 +74,6 @@ namespace Ambarina.DAL
             finally { conexao.FecharConexao(); }
         }
 
-        // Método para Deletar
         public void ExcluirInsumo(int id)
         {
             try
@@ -78,20 +91,21 @@ namespace Ambarina.DAL
             finally { conexao.FecharConexao(); }
         }
 
-        // Método para Editar (Update)
         public void EditarInsumo(InsumoDTO insumo)
         {
             try
             {
                 conexao.AbrirConexao();
                 string sql = "UPDATE insumos SET nome=@nome, categoria=@cat, unidade_medida=@un, " +
-                             "estoque_atual=@est, custo_unitario=@custo, estoque_minimo=@min WHERE id_insumo=@id";
+                             "estoque_atual=@est, quantidade_inicial=@qtdIni, custo_unitario=@custo, estoque_minimo=@min WHERE id_insumo=@id";
 
                 MySqlCommand cmd = new MySqlCommand(sql, conexao.conectar);
                 cmd.Parameters.AddWithValue("@nome", insumo.Nome);
                 cmd.Parameters.AddWithValue("@cat", insumo.Categoria);
                 cmd.Parameters.AddWithValue("@un", insumo.UnidadeMedida);
-                cmd.Parameters.AddWithValue("@est", insumo.QtdeInicial);
+
+                cmd.Parameters.AddWithValue("@est", insumo.EstoqueAtual);
+                cmd.Parameters.AddWithValue("@qtdIni", insumo.QtdeInicial);
                 cmd.Parameters.AddWithValue("@custo", insumo.CustoInicial);
                 cmd.Parameters.AddWithValue("@min", insumo.EstoqueMinimo);
                 cmd.Parameters.AddWithValue("@id", insumo.Id);
@@ -110,7 +124,6 @@ namespace Ambarina.DAL
             try
             {
                 conexao.AbrirConexao();
-                // SQL que diminui o estoque atual
                 string sql = "UPDATE insumos SET estoque_atual = estoque_atual - @qtd WHERE id_insumo = @id";
                 MySqlCommand cmd = new MySqlCommand(sql, conexao.conectar);
                 cmd.Parameters.AddWithValue("@qtd", quantidade);
@@ -130,7 +143,6 @@ namespace Ambarina.DAL
             {
                 conexao.AbrirConexao();
                 DataTable dt = new DataTable();
-                // Buscamos apenas o ID e o Nome para não pesar a memória
                 string sql = "SELECT id_insumo, nome FROM insumos ORDER BY nome ASC";
                 MySqlDataAdapter da = new MySqlDataAdapter(sql, conexao.conectar);
                 da.Fill(dt);
